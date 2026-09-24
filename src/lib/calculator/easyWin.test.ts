@@ -13,7 +13,7 @@ describe('findEasyWin', () => {
   it('foreslår én kjøretur mindre for en som kjører til jobb', () => {
     const win = findEasyWin(seedData, { fossilbil: indexOf('fossilbil', 'Til og fra jobb (ca. 150 km)') })
     expect(win?.method.id).toBe('fossilbil')
-    // 30 km × bensinbil (sykkel erstatter, 0 utslipp) × 52 uker
+    // 30 km sykling i stedet for bensinbil × 52 uker
     expect(win?.savingKg).toBeCloseTo(30 * method('fossilbil').kgCo2ePerUnit * 52)
   })
 

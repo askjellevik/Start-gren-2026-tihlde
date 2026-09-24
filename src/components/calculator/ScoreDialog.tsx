@@ -1,6 +1,8 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react'
+import { useEffect } from 'react'
 import { Dialog } from 'radix-ui'
-import { Lightbulb, X } from 'lucide-react'
+import { Snowflake, X } from 'lucide-react'
+import { AnimatedNumber } from '@/components/ui/animated-number'
 import { Button } from '@/components/ui/button'
 import type { EasyWin } from '@/lib/calculator/easyWin'
 import { formatKg, type Footprint } from '@/lib/calculator/engine'
@@ -8,7 +10,6 @@ import { formatArea, seaIceM2, shareOfBudget } from '@/lib/calculator/equivalent
 import { isKlimaversting, scoreHeadline, sustainabilityScore } from '@/lib/calculator/score'
 import { cn } from '@/lib/utils'
 import type { CalculatorSettings } from '@/types/calculator'
-import { AverageNote } from './AverageNote'
 
 interface ScoreDialogProps {
   open: boolean
@@ -18,74 +19,48 @@ interface ScoreDialogProps {
   easyWin: EasyWin | null
 }
 
-// Popup med bærekraftsscore 1–10 og de største utslippskildene med tips.
+// Popup med bærekraftsscore 1–10 og ett enkelt grep. Detaljene står i sektordiagrammet.
 export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }: ScoreDialogProps) {
   const averageKg = settings.nationalAverageKg
-  const reduceMotion = useReducedMotion()
   const score = sustainabilityScore(footprint.totalKg, averageKg)
   const versting = isKlimaversting(score)
   const diffPct = Math.round((footprint.totalKg / averageKg - 1) * 100)
-  const worst = footprint.methods.slice(0, 3)
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/50 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0" />
         <Dialog.Content
-          className="fixed top-1/2 left-1/2 z-50 max-h-[90svh] w-[calc(100vw-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-background p-6 shadow-2xl data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in-0 sm:p-8"
+          className="fixed top-1/2 left-1/2 z-50 max-h-[90svh] w-[calc(100vw-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl bg-background p-6 shadow-2xl ring-1 ring-border/60 data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in-0 sm:p-8"
         >
           <Dialog.Close className="absolute top-4 right-4 rounded-md p-1 text-muted-foreground hover:bg-muted" aria-label="Lukk">
             <X className="size-5" />
           </Dialog.Close>
 
-          <Dialog.Title className="text-sm font-bold tracking-wide text-muted-foreground uppercase">
+          <Dialog.Title className="text-center text-xs font-bold tracking-wider text-muted-foreground uppercase">
             Din bærekraftsscore
           </Dialog.Title>
 
-          <div className="mt-4 flex items-end gap-4">
-            <motion.span
-              initial={reduceMotion ? false : { scale: 0.4, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 14 }}
-              className={cn('text-7xl leading-none font-black', versting ? 'text-danger' : 'text-primary')}
-            >
-              {score}
-            </motion.span>
-            <span className="pb-2 text-lg text-muted-foreground">av 10</span>
-          </div>
+          <ScoreGauge score={score} versting={versting} />
 
-          {/* Skala 1–10 */}
-          <div className="mt-4 flex gap-1" aria-hidden>
-            {Array.from({ length: 10 }, (_, i) => (
-              <motion.span
-                key={i}
-                initial={reduceMotion ? false : { scaleY: 0 }}
-                animate={{ scaleY: 1 }}
-                transition={{ delay: reduceMotion ? 0 : 0.05 * i }}
-                className={cn(
-                  'h-2.5 flex-1 origin-bottom rounded-full',
-                  i < score ? (versting ? 'bg-danger' : 'bg-accent') : 'bg-muted',
-                )}
-              />
-            ))}
-          </div>
-
-          <p className={cn('mt-5 text-2xl font-black', versting ? 'text-danger' : 'text-primary')}>
+          <p className={cn('mt-1 text-center text-2xl font-normal', versting ? 'text-danger' : 'text-primary-ink')}>
             {scoreHeadline(score)}
           </p>
-          <Dialog.Description className="mt-1">
+          <Dialog.Description className="mt-1 text-center">
             Fotavtrykket ditt er <strong>{formatKg(footprint.totalKg)}</strong> per år, som er{' '}
             <strong>{Math.abs(diffPct)} %</strong> {diffPct >= 0 ? 'over' : 'under'} snittet for en
             nordmann ({formatKg(averageKg)}).
           </Dialog.Description>
 
           {easyWin && (
-            <div className="mt-5 flex gap-3 rounded-lg border-2 border-accent bg-accent/10 p-4">
-              <Lightbulb aria-hidden className="mt-0.5 size-5 shrink-0 text-accent" />
+            <div className="mt-5 flex gap-3 rounded-2xl bg-gradient-to-br from-accent/20 via-accent/5 to-accent/10 p-4 ring-1 ring-accent/30">
+              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-card shadow-soft">
+                <Snowflake className="size-5 text-primary-ink" />
+              </span>
               <p>
-                <span className="block text-sm font-bold text-primary">Et enkelt grep</span>
+                <span className="block text-sm font-bold text-primary-ink">Et enkelt grep</span>
                 Dersom du bare {easyWin.text}, sparer du{' '}
-                <strong className="text-primary">{formatKg(easyWin.savingKg)}</strong> i året.
+                <strong className="text-primary-ink">{formatKg(easyWin.savingKg)}</strong> i året.
                 <span className="mt-2 block text-sm">
                   Hvert år redder det omtrent{' '}
                   <strong>{formatArea(seaIceM2(easyWin.savingKg))} arktisk sommeris</strong> –
@@ -103,41 +78,6 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
             </div>
           )}
 
-          {versting && (
-            <p className="mt-4 rounded-lg bg-danger/10 p-3 text-sm text-danger">
-              Du er i klimaverstingklassen – men det betyr bare at du har mye å spare. Se de største
-              kildene under.
-            </p>
-          )}
-
-          {worst.length > 0 && (
-            <div className="mt-6">
-              <h3 className="font-bold text-primary">Dine største utslippskilder</h3>
-              <ol className="mt-2 space-y-3">
-                {worst.map(({ method, kgPerYear }, i) => (
-                  <li key={method.id} className="rounded-lg bg-muted p-3">
-                    <div className="flex justify-between gap-2 font-bold">
-                      <span>
-                        {i + 1}. {method.name}
-                      </span>
-                      <span className="tabular-nums">{formatKg(kgPerYear)}</span>
-                    </div>
-                    {method.tip && <p className="mt-1 text-sm text-muted-foreground">{method.tip}</p>}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          {footprint.answeredCount < footprint.methodCount && (
-            <p className="mt-4 text-xs text-muted-foreground">
-              Du har svart på {footprint.answeredCount} av {footprint.methodCount} spørsmål. Ubesvarte
-              spørsmål teller som null utslipp.
-            </p>
-          )}
-
-          <AverageNote settings={settings} className="mt-4" />
-
           <Dialog.Close asChild>
             <Button className="mt-6 w-full" size="lg">
               Se tanken
@@ -146,5 +86,63 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  )
+}
+
+// Halvsirkel-måler: buen fylles fra rødt (1) til grønt (10) opp til scoren,
+// mens tallet teller opp.
+const GAUGE_R = 88
+const GAUGE_ARC = `M${120 - GAUGE_R},120 A${GAUGE_R},${GAUGE_R} 0 0 1 ${120 + GAUGE_R},120`
+const GAUGE_EASE = [0.22, 1, 0.36, 1] as const
+const formatScore = (n: number) => String(Math.round(n))
+
+function ScoreGauge({ score, versting }: { score: number; versting: boolean }) {
+  const reduceMotion = useReducedMotion()
+  const fraction = score / 10
+  const duration = reduceMotion ? 0 : 1
+
+  // Knotten følger buen: vi animerer andelen og regner ut punktet.
+  const progress = useMotionValue(0)
+  useEffect(() => {
+    const controls = animate(progress, fraction, { duration, ease: GAUGE_EASE })
+    return () => controls.stop()
+  }, [progress, fraction, duration])
+  const knobX = useTransform(progress, (p) => 120 + GAUGE_R * Math.cos(Math.PI * (1 - p)))
+  const knobY = useTransform(progress, (p) => 120 - GAUGE_R * Math.sin(Math.PI * (1 - p)))
+
+  return (
+    <div className="relative mx-auto mt-2 w-full max-w-[16rem]">
+      <svg viewBox="0 0 240 132" className="w-full" aria-hidden>
+        <defs>
+          <linearGradient id="gauge-fill" x1="0" x2="1">
+            <stop offset="0" stopColor="var(--danger)" />
+            <stop offset="0.45" stopColor="#a3b85a" />
+            <stop offset="1" stopColor="var(--accent)" />
+          </linearGradient>
+        </defs>
+        <path d={GAUGE_ARC} fill="none" stroke="var(--muted)" strokeWidth={18} strokeLinecap="round" />
+        <motion.path
+          d={GAUGE_ARC}
+          fill="none"
+          stroke="url(#gauge-fill)"
+          strokeWidth={18}
+          strokeLinecap="round"
+          style={{ pathLength: progress }}
+        />
+        <motion.circle
+          r={11}
+          fill="white"
+          stroke={versting ? 'var(--danger)' : 'var(--primary)'}
+          strokeWidth={4}
+          style={{ cx: knobX, cy: knobY }}
+        />
+      </svg>
+      <div className="absolute inset-x-0 bottom-0 flex flex-col items-center">
+        <span className={cn('text-6xl leading-none font-bold tabular-nums', versting ? 'text-danger' : 'text-primary-ink')}>
+          <AnimatedNumber value={score} from={0} format={formatScore} duration={duration} />
+        </span>
+        <span className="text-sm text-muted-foreground">av 10</span>
+      </div>
+    </div>
   )
 }

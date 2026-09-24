@@ -1,17 +1,22 @@
-import { RotateCcw } from 'lucide-react'
-import { useMemo, useRef, useState, type MouseEvent } from 'react'
-import { useReducedMotion } from 'motion/react'
+import { RotateCcw, Sparkles } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatedNumber } from '@/components/ui/animated-number'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { useCalculatorData } from '@/hooks/useCalculatorData'
 import { buildMethodColors } from '@/lib/calculator/colors'
 import { findEasyWin, type EasyWin } from '@/lib/calculator/easyWin'
-import { computeFootprint, type Footprint } from '@/lib/calculator/engine'
+import { computeFootprint, formatKg, type Footprint } from '@/lib/calculator/engine'
 import type { Answers } from '@/types/calculator'
 import { AverageNote } from './AverageNote'
 import { DonutChart } from './DonutChart'
 import { FlyingChips, type FlyingChip } from './FlyingChips'
 import { MethodPicker } from './MethodPicker'
-import { FILL_DURATION, OilTank } from './OilTank'
+import { OilTank } from './OilTank'
+
+/** Popupen åpnes like etter klikk, mens oljen fortsatt stiger bak den. */
+const DIALOG_DELAY_MS = 500
 import { ScoreDialog } from './ScoreDialog'
 import { SourcesSection } from './SourcesSection'
 
@@ -28,8 +33,21 @@ export function Calculator() {
   const [snapshot, setSnapshot] = useState<{ footprint: Footprint; easyWin: EasyWin | null } | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const dialogTimer = useRef<number | undefined>(undefined)
+  const highlightTimer = useRef<number | undefined>(undefined)
+  const advanceTimer = useRef<number | undefined>(undefined)
   const donutRef = useRef<HTMLDivElement>(null)
-  const tankRef = useRef<HTMLDivElement>(null)
+  const tankRef = useRef<HTMLElement>(null)
+  const calcAreaRef = useRef<HTMLDivElement>(null)
+  const [showFloatingBar, setShowFloatingBar] = useState(false)
+
+  // Viser den flytende «Regn ut»-linjen bare når knappen i kortet ikke er synlig.
+  useEffect(() => {
+    const node = calcAreaRef.current
+    if (!node) return
+    const observer = new IntersectionObserver(([entry]) => setShowFloatingBar(!entry.isIntersecting))
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
   const chipKey = useRef(0)
 
   const colors = useMemo(() => buildMethodColors(data), [data])
@@ -49,7 +67,10 @@ export function Calculator() {
     if (!method) return
     const next = { ...answers, [methodId]: choiceIndex }
     setAnswers(next)
+    // Løfter biten i diagrammet et øyeblikk.
     setHighlightId(methodId)
+    window.clearTimeout(highlightTimer.current)
+    highlightTimer.current = window.setTimeout(() => setHighlightId(null), 650)
 
     // Merkelapp som flyr inn i diagrammet
     const target = donutRef.current?.getBoundingClientRect()
@@ -73,50 +94,58 @@ export function Calculator() {
     const nextMethod = [...orderedMethods.slice(start + 1), ...orderedMethods.slice(0, start)].find(
       (m) => next[m.id] === undefined,
     )
+    window.clearTimeout(advanceTimer.current)
     if (nextMethod) {
-      window.setTimeout(() => setActiveMethodId(nextMethod.id), reduceMotion ? 0 : 450)
+      advanceTimer.current = window.setTimeout(() => setActiveMethodId(nextMethod.id), reduceMotion ? 0 : 450)
     }
+  }
+
+  // Velger man selv et spørsmål, avbrytes det automatiske hoppet videre.
+  function handleSelectMethod(methodId: string) {
+    window.clearTimeout(advanceTimer.current)
+    setActiveMethodId(methodId)
   }
 
   function handleCalculate() {
     setSnapshot({ footprint, easyWin: findEasyWin(data, answers) })
-    tankRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' })
-    // Popupen kommer når oljen har steget ferdig.
+    // På store skjermer står tanken ved siden av knappen; på mobil scroller vi dit.
+    if (window.matchMedia('(max-width: 1023px)').matches) {
+      tankRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' })
+    }
+    // Oljen stiger med en gang; popupen kommer kort etter mens oljen fortsatt stiger.
     window.clearTimeout(dialogTimer.current)
-    dialogTimer.current = window.setTimeout(
-      () => setDialogOpen(true),
-      reduceMotion ? 0 : FILL_DURATION * 1000 + 400,
-    )
+    dialogTimer.current = window.setTimeout(() => setDialogOpen(true), reduceMotion ? 0 : DIALOG_DELAY_MS)
   }
 
   function handleReset() {
     window.clearTimeout(dialogTimer.current)
+    window.clearTimeout(advanceTimer.current)
     setAnswers({})
     setSnapshot(null)
     setActiveMethodId(null)
     setHighlightId(null)
   }
 
-  const progress = Math.round((footprint.answeredCount / Math.max(1, footprint.methodCount)) * 100)
+  const progress = footprint.answeredCount / Math.max(1, footprint.methodCount)
 
   return (
     <div className="space-y-6">
-      <section aria-labelledby="inputs-heading" className="space-y-3">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 id="inputs-heading" className="text-2xl font-black text-primary">
-              1. Fortell om hverdagen din
-            </h2>
-            <p className="text-muted-foreground">
-              Velg en kategori til venstre og svar på spørsmålene til høyre.
-            </p>
-          </div>
+      <Card aria-labelledby="inputs-heading" className="p-5 sm:p-7">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+          <StepHeading step={1} id="inputs-heading" title="Fortell om hverdagen din">
+            Svar på spørsmålene i hver kategori, så dukker den neste opp.
+          </StepHeading>
           <div className="flex items-center gap-3 text-sm">
-            <div className="w-32">
+            <div className="w-36">
               <div className="h-2 overflow-hidden rounded-full bg-muted">
-                <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${progress}%` }} />
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-accent to-primary-strong"
+                  initial={false}
+                  animate={{ width: `${progress * 100}%` }}
+                  transition={{ type: 'spring', stiffness: 120, damping: 20 }}
+                />
               </div>
-              <span className="text-xs text-muted-foreground">
+              <span className="mt-1 block text-xs text-muted-foreground">
                 {footprint.answeredCount} av {footprint.methodCount} besvart
               </span>
             </div>
@@ -130,24 +159,27 @@ export function Calculator() {
           answers={answers}
           colors={colors}
           activeMethodId={activeId}
-          onSelectMethod={setActiveMethodId}
+          onSelectMethod={handleSelectMethod}
           onAnswer={handleAnswer}
         />
-      </section>
+      </Card>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <section aria-labelledby="donut-heading" className="rounded-lg border bg-card p-5 md:p-6">
-          <h2 id="donut-heading" className="text-2xl font-black text-primary">
-            2. Dine utslipp
-          </h2>
-          <p className="mb-5 text-muted-foreground">
-            Oppdateres mens du svarer. De største sektorene er verstingene dine.
-          </p>
-          <DonutChart ref={donutRef} footprint={footprint} colors={colors} highlightId={highlightId} />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <Card aria-labelledby="donut-heading" className="p-5 sm:p-7">
+          <StepHeading step={2} id="donut-heading" title="Dine utslipp">
+            Oppdateres mens du svarer. De største bitene er verstingene dine.
+          </StepHeading>
+          <div className="mt-6">
+            <DonutChart ref={donutRef} footprint={footprint} colors={colors} highlightId={highlightId} />
+          </div>
 
-          <div className="mt-6 border-t pt-5">
-            <Button size="lg" className="h-12 w-full text-base font-bold" onClick={handleCalculate}>
-              Regn ut min bærekraftsscore
+          <div ref={calcAreaRef} className="mt-7 border-t border-border/70 pt-6">
+            <Button
+              size="lg"
+              className="btn-shine h-13 w-full rounded-xl text-lg font-bold shadow-lift transition-transform hover:-translate-y-0.5"
+              onClick={handleCalculate}
+            >
+              <Sparkles /> Regn ut min bærekraftsscore
             </Button>
             {footprint.answeredCount < footprint.methodCount && (
               <p className="mt-2 text-center text-xs text-muted-foreground">
@@ -155,35 +187,57 @@ export function Calculator() {
               </p>
             )}
           </div>
-        </section>
+        </Card>
 
-        <section
+        <Card
           ref={tankRef}
           aria-labelledby="tank-heading"
-          className="rounded-lg border bg-secondary p-5 md:p-6"
+          className="scroll-mt-6 bg-gradient-to-b from-secondary to-card p-5 sm:p-7"
         >
-          <h2 id="tank-heading" className="text-2xl font-black text-primary">
-            3. Mot snittet
-          </h2>
-          <p className="mb-2 text-sm text-muted-foreground">
-            Den oransje streken er snittet for en nordmann, den grønne er{' '}
+          <StepHeading step={3} id="tank-heading" title="I forhold til snittet">
+            Oransje strek er snittet for en nordmann, grønn er{' '}
             {data.settings.targetLabel?.toLowerCase() ?? 'klimamålet'}.
-          </p>
+          </StepHeading>
           {snapshotStale && (
-            <p className="mb-2 rounded-md bg-background p-2 text-xs">
+            <p className="mt-3 rounded-lg bg-background/80 p-2 text-xs ring-1 ring-border">
               Du har endret svar. Trykk «Regn ut» igjen for å oppdatere tanken.
             </p>
           )}
-          <OilTank
-            result={
-              snapshot ? { totalKg: snapshot.footprint.totalKg, baselineKg: snapshot.footprint.baselineKg } : null
-            }
-            averageKg={data.settings.nationalAverageKg}
-            targetKg={data.settings.targetKg}
-          />
+          <div className="mt-4">
+            <OilTank
+              result={
+                snapshot ? { totalKg: snapshot.footprint.totalKg, baselineKg: snapshot.footprint.baselineKg } : null
+              }
+              averageKg={data.settings.nationalAverageKg}
+              targetKg={data.settings.targetKg}
+            />
+          </div>
           <AverageNote settings={data.settings} className="mt-4" />
-        </section>
+        </Card>
       </div>
+
+      {/* Flytende oppsummering når «Regn ut»-knappen er utenfor skjermen */}
+      <AnimatePresence>
+        {showFloatingBar && footprint.answeredCount > 0 && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+            className="fixed inset-x-0 bottom-4 z-30 flex justify-center px-4"
+          >
+            <div className="flex items-center gap-4 rounded-full border border-white/40 bg-primary-strong/95 py-2 pr-2 pl-5 text-primary-foreground shadow-lift backdrop-blur-md">
+              <span className="text-sm">
+                Dine valg:{' '}
+                <AnimatedNumber value={footprint.personalKg} format={formatKg} className="font-bold tabular-nums" />
+              </span>
+              <Button size="sm" variant="secondary" className="rounded-full font-bold" onClick={handleCalculate}>
+                Regn ut
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <SourcesSection data={data} />
 
@@ -197,6 +251,25 @@ export function Calculator() {
         />
       )}
       <FlyingChips chips={chips} onDone={(key) => setChips((c) => c.filter((x) => x.key !== key))} />
+    </div>
+  )
+}
+
+function StepHeading({ step, id, title, children }: { step: number; id: string; title: string; children: ReactNode }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span
+        aria-hidden
+        className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-strong to-primary-ink text-sm font-bold text-primary-foreground shadow-lift"
+      >
+        {step}
+      </span>
+      <div>
+        <h2 id={id} className="text-xl font-normal text-primary-ink sm:text-2xl">
+          {title}
+        </h2>
+        <p className="text-sm text-muted-foreground">{children}</p>
+      </div>
     </div>
   )
 }

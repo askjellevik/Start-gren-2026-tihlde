@@ -2,8 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource/lato/400.css";
+@import "@fontsource/lato/400-italic.css";
 @import "@fontsource/lato/700.css";
-@import "@fontsource/lato/900.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -14,10 +14,12 @@
    ===================================================================== */
 :root {
   /* Farger */
-  --brand-primary: #2a4e2a;            /* Cultura mørk grønn */
+  --brand-primary: #728f3f;            /* Cultura olivengrønn – flater og knapper */
+  --brand-primary-strong: #5a7330;     /* mørkere ende av gradienter, hover */
+  --brand-primary-ink: #4f6629;        /* grønn tekst på lys bakgrunn (6,4:1 kontrast) */
   --brand-primary-foreground: #ffffff;
   --brand-secondary: #f7f2ef;          /* Cultura varm off-white */
-  --brand-secondary-foreground: #2a4e2a;
+  --brand-secondary-foreground: #4f6629;
   --brand-accent: #728f3f;             /* Cultura olivengrønn */
   --brand-accent-foreground: #ffffff;
   --brand-background: #ffffff;
@@ -26,15 +28,17 @@
   /* Kalkulator-spesifikt */
   --oil: #1f1d1a;
   --oil-shine: #4a453d;
-  --oil-shared: #8b8579;               /* felles utslipp i tanken */
+  --oil-shared: #a3b85a;               /* faste tjenester i tanken (grønn) */
   --danger: #b3261e;
-  --average-line: #c46a2b;
+  --average-line: #c62828;
+  --average-label: #a61b1b;          /* tekst i samme farge, høy kontrast */
 
   /* Radius – alle rounded-* skaleres fra denne */
   --brand-radius: 0.5rem;
 
-  /* Fonter. Cultura bruker Lato i brødtekst. Egen overskriftsfont
-     (cultura-bank) er lisensiert og brukes ikke her. */
+  /* Fonter. cultura.no bruker Lato til alt: overskrifter i vekt 400 med
+     normal sperring, knapper og uthevinger i 700. («cultura-bank» er bare
+     en ikonfont.) */
   --brand-font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
   --brand-font-heading: var(--brand-font-sans);
 }
@@ -50,6 +54,8 @@
   --popover: var(--brand-background);
   --popover-foreground: var(--brand-foreground);
   --primary: var(--brand-primary);
+  --primary-strong: var(--brand-primary-strong);
+  --primary-ink: var(--brand-primary-ink);
   --primary-foreground: var(--brand-primary-foreground);
   --secondary: var(--brand-secondary);
   --secondary-foreground: var(--brand-secondary-foreground);
@@ -120,6 +126,8 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-ink: var(--primary-ink);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -132,6 +140,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-oil: var(--oil);
+  --color-average-label: var(--average-label);
   --color-oil-shared: var(--oil-shared);
   --color-danger: var(--danger);
   --color-average-line: var(--average-line);
@@ -170,6 +179,8 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+    font-weight: 400;
+    line-height: 1.25;
   }
 }
 
@@ -180,5 +191,53 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* =====================================================================
+   MODERNE FLATER – myke skygger, bakgrunnsgradient og glans
+   ===================================================================== */
+@utility shadow-soft {
+  box-shadow:
+    0 1px 2px rgb(42 78 42 / 0.05),
+    0 6px 16px -4px rgb(42 78 42 / 0.08),
+    0 24px 48px -24px rgb(42 78 42 / 0.18);
+}
+
+@utility shadow-lift {
+  box-shadow:
+    0 2px 4px rgb(42 78 42 / 0.08),
+    0 12px 28px -6px rgb(42 78 42 / 0.2);
+}
+
+@layer base {
+  body {
+    background:
+      radial-gradient(60rem 30rem at 100% 0%, rgb(114 143 63 / 0.10), transparent 60%),
+      radial-gradient(50rem 30rem at 0% 30%, rgb(247 242 239 / 0.9), transparent 70%),
+      var(--background);
+    background-attachment: fixed;
+  }
+}
+
+@keyframes shine {
+  from { transform: translateX(-150%) skewX(-20deg); }
+  to { transform: translateX(350%) skewX(-20deg); }
+}
+
+/* Lysstripe som glir over knappen */
+@utility btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 35%;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.28), transparent);
+    transform: translateX(-150%) skewX(-20deg);
+    animation: shine 4s ease-in-out 1s infinite;
+    pointer-events: none;
   }
 }

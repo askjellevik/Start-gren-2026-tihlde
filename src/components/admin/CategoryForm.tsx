@@ -49,7 +49,7 @@ export function CategoryForm({ category, onCancel, onSaved }: CategoryFormProps)
 
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-5 rounded-lg border bg-card p-6" noValidate>
-      <h2 className="text-2xl font-black text-primary">
+      <h2 className="text-2xl font-bold text-primary-ink">
         {category ? `Rediger «${category.name}»` : 'Ny kategori'}
       </h2>
       <Field label="Navn" htmlFor="c-name" error={errors.name}>

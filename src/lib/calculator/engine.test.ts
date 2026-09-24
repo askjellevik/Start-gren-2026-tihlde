@@ -36,9 +36,9 @@ describe('computeFootprint', () => {
   })
 
   it('summerer, grupperer og sorterer verstingene først', () => {
-    const fp = computeFootprint(seedData, { 'rodt-kjott': 1, 'fly-lang': 1, 'sykkel-gange': 2 })
+    const fp = computeFootprint(seedData, { 'rodt-kjott': 1, 'fly-lang': 1, fossilbil: 0 })
     expect(fp.answeredCount).toBe(3)
-    // Sykkel har 0 utslipp og tas ikke med i diagrammet.
+    // «Ingen» bilkjøring gir 0 utslipp og tas ikke med i diagrammet.
     expect(fp.methods.map((m) => m.method.id)).toEqual(['fly-lang', 'rodt-kjott'])
     const fly = method('fly-lang').kgCo2ePerUnit
     const kjott = method('rodt-kjott').kgCo2ePerUnit * 52
