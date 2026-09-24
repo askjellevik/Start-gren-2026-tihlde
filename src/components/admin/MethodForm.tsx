@@ -108,7 +108,7 @@ export function MethodForm({ method, categories, methods, onCancel, onSaved }: M
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 rounded-lg border bg-card p-6" noValidate>
-      <h2 className="text-2xl font-black text-primary-ink">
+      <h2 className="text-2xl font-bold text-primary-ink">
         {method ? `Rediger «${method.name}»` : 'Ny utslippsmetode'}
       </h2>
 

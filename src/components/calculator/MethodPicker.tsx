@@ -78,7 +78,7 @@ export function MethodPicker({
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
-          className="flex w-full items-center justify-between bg-gradient-to-r from-primary to-primary-strong px-4 py-3 text-left font-bold text-primary-foreground"
+          className="flex w-full items-center justify-between bg-gradient-to-r from-primary-strong to-primary-ink px-4 py-3 text-left font-bold text-primary-foreground"
         >
           Utslippsmetoder
           <ChevronDown className={cn('size-5 transition-transform duration-300', menuOpen && 'rotate-180')} />
@@ -207,7 +207,7 @@ export function MethodPicker({
               </legend>
               <p
                 id="method-question"
-                className="mb-6 text-xl leading-snug font-black tracking-tight text-primary-ink sm:text-2xl"
+                className="mb-6 text-xl leading-snug font-normal text-primary-ink sm:text-2xl"
               >
                 {activeMethod.question}
               </p>
@@ -233,7 +233,7 @@ export function MethodPicker({
                         <motion.span
                           layoutId={`choice-${activeMethod.id}`}
                           aria-hidden
-                          className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-primary-strong"
+                          className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary-strong to-primary-ink"
                           transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                         />
                       )}

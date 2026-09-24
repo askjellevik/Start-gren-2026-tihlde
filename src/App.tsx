@@ -15,6 +15,7 @@ function App() {
       <header className="relative isolate overflow-clip bg-primary text-primary-foreground">
         {/* Myke lysflekker i bakgrunnen */}
         <div aria-hidden className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-ink via-primary-strong/90 to-transparent" />
           <div className="absolute -top-32 -right-24 size-[28rem] rounded-full bg-accent/40 blur-3xl" />
           <div className="absolute -bottom-40 -left-20 size-[24rem] rounded-full bg-primary-strong blur-3xl" />
         </div>
@@ -29,10 +30,10 @@ function App() {
 
         {!isAdminRoute && (
           <div className="mx-auto max-w-6xl px-4 pt-14 pb-20 sm:px-6 sm:pt-20 sm:pb-24">
-            <h1 className="max-w-3xl text-4xl leading-[1.05] font-black tracking-tight text-balance sm:text-5xl">
+            <h1 className="max-w-3xl text-4xl leading-[1.15] font-normal text-balance sm:text-5xl">
               Hvor bærekraftig er du egentlig i ditt daglige liv?
             </h1>
-            <p className="mt-4 max-w-xl text-base text-primary-foreground/80 sm:text-lg">
+            <p className="mt-4 max-w-xl text-base text-primary-foreground sm:text-lg">
               Svar på noen få spørsmål om hverdagen din og se hvordan du ligger an mot en
               gjennomsnittlig nordmann.
             </p>

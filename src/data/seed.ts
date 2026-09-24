@@ -44,14 +44,14 @@ export const seedData: CalculatorData = {
 
   categories: [
     { id: 'mat', name: 'Ukentlige matvaner', description: 'Hva du spiser i løpet av en vanlig uke.', color: '#728f3f', sortOrder: 1 },
-    { id: 'transport', name: 'Reise og transport', description: 'Hverdagsreiser og ferier.', color: '#c46a2b', sortOrder: 2 },
+    { id: 'transport', name: 'Reise og transport', description: 'Hverdagsreiser og ferier.', color: '#3d6b4f', sortOrder: 2 },
     {
       id: 'bolig', name: 'Bolig og energi',
       description: 'Norsk strøm har lave utslipp, så det er mest bygging og vedlikehold av boligen som teller.',
-      color: '#3f6f8f', sortOrder: 3,
+      color: '#a3b85a', sortOrder: 3,
     },
-    { id: 'forbruk', name: 'Forbruk og fritid', description: 'Ting du kjøper og hva du gjør på fritiden.', color: '#8a5a9e', sortOrder: 4 },
-    { id: 'avfall', name: 'Daglige rutiner (søppel)', description: 'Avfall og kildesortering.', color: '#8a7a5a', sortOrder: 5 },
+    { id: 'forbruk', name: 'Forbruk og fritid', description: 'Ting du kjøper og hva du gjør på fritiden.', color: '#4f6629', sortOrder: 4 },
+    { id: 'avfall', name: 'Daglige rutiner (søppel)', description: 'Avfall og kildesortering.', color: '#7fa37a', sortOrder: 5 },
   ],
 
   methods: [
@@ -152,10 +152,10 @@ export const seedData: CalculatorData = {
         { label: 'Ingen', value: 0 }, { label: 'Litt (ca. 25 km)', value: 25 },
         { label: 'Til og fra jobb (ca. 150 km)', value: 150 }, { label: 'Mye (ca. 400 km)', value: 400 },
       ],
-      tip: 'Samkjøring, kollektiv eller elbil på jobbreisen kutter mye.',
+      tip: 'Sykkel eller elsykkel på jobbreisen kutter mye – og er gratis trening.',
       sourceName: 'ICCT (2025): bensinbil 235 g CO2e per km, hele livsløpet', sourceUrl: ICCT_2025, sortOrder: 1,
-      easyWinText: 'tar én kjøretur mindre til jobb i uka (ca. 30 km tur/retur) og sykler, går eller jobber hjemmefra i stedet',
-      easyWinUnits: 30, easyWinReplacementId: 'sykkel-gange',
+      easyWinText: 'sykler eller går til jobb én dag i uka i stedet for å kjøre (ca. 30 km tur/retur)',
+      easyWinUnits: 30, easyWinReplacementId: null,
     },
     {
       // ICCT 2025: elbil på fornybar strøm 52 g CO2e/km (norsk strøm er ~95 % fornybar).
@@ -168,7 +168,8 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'ICCT (2025): elbil på fornybar strøm 52 g CO2e per km, hele livsløpet', sourceUrl: ICCT_2025, sortOrder: 2,
-      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
+      easyWinText: 'sykler til jobb én dag i uka i stedet for å kjøre (ca. 30 km tur/retur)',
+      easyWinUnits: 30, easyWinReplacementId: null,
     },
     {
       id: 'buss', categoryId: 'transport', name: 'Buss',
@@ -195,18 +196,6 @@ export const seedData: CalculatorData = {
       easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
-      id: 'sykkel-gange', categoryId: 'transport', name: 'Sykkel og gange',
-      question: 'Hvor mange kilometer sykler eller går du i uka?',
-      period: 'week', unitLabel: 'km', kgCo2ePerUnit: 0,
-      choices: [
-        { label: 'Under 5 km', value: 3 }, { label: '5–20 km', value: 12 },
-        { label: '20–50 km', value: 35 }, { label: 'Over 50 km', value: 60 },
-      ],
-      tip: null,
-      sourceName: 'Regnes som utslippsfritt', sourceUrl: null, sortOrder: 5,
-      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
-    },
-    {
       // 181 g per passasjerkm × ca. 1000 km tur/retur (f.eks. Oslo–Trondheim).
       id: 'fly-innland', categoryId: 'transport', name: 'Innenlandsfly',
       question: 'Hvor mange tur/retur-flyreiser innenlands tar du i året?',
@@ -216,7 +205,7 @@ export const seedData: CalculatorData = {
         { label: '3–5', value: 4 }, { label: '6 eller flere', value: 8 },
       ],
       tip: 'Tog mellom de største byene har en brøkdel av utslippene til fly.',
-      sourceName: 'SSB: innenlands luftfart 181 g CO2 per passasjerkm (2019), ca. 1000 km tur/retur', sourceUrl: SSB_TRANSPORT, sortOrder: 6,
+      sourceName: 'SSB: innenlands luftfart 181 g CO2 per passasjerkm (2019), ca. 1000 km tur/retur', sourceUrl: SSB_TRANSPORT, sortOrder: 5,
       easyWinText: 'tar toget i stedet for fly på én innenlandsreise i året',
       easyWinUnits: 1, easyWinReplacementId: null,
     },
@@ -230,7 +219,7 @@ export const seedData: CalculatorData = {
         { label: '2–3', value: 2.5 }, { label: '4 eller flere', value: 5 },
       ],
       tip: 'Én Europa-tur mindre i året sparer nesten et halvt tonn.',
-      sourceName: 'DEFRA 2024: kortdistanse 0,151 kg CO2e per passasjerkm, ca. 3000 km tur/retur', sourceUrl: DEFRA, sortOrder: 7,
+      sourceName: 'DEFRA 2024: kortdistanse 0,151 kg CO2e per passasjerkm, ca. 3000 km tur/retur', sourceUrl: DEFRA, sortOrder: 6,
       easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
@@ -243,7 +232,7 @@ export const seedData: CalculatorData = {
         { label: '2', value: 2 }, { label: '3 eller flere', value: 3.5 },
       ],
       tip: 'Én langdistansereise gir mer utslipp enn et helt års middager.',
-      sourceName: 'DEFRA 2024: langdistanse 0,117 kg CO2e per passasjerkm, ca. 15 000 km tur/retur', sourceUrl: DEFRA, sortOrder: 8,
+      sourceName: 'DEFRA 2024: langdistanse 0,117 kg CO2e per passasjerkm, ca. 15 000 km tur/retur', sourceUrl: DEFRA, sortOrder: 7,
       easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
 

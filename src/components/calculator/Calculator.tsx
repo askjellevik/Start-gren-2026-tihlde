@@ -176,7 +176,7 @@ export function Calculator() {
           <div ref={calcAreaRef} className="mt-7 border-t border-border/70 pt-6">
             <Button
               size="lg"
-              className="btn-shine h-13 w-full rounded-xl text-base font-bold shadow-lift transition-transform hover:-translate-y-0.5"
+              className="btn-shine h-13 w-full rounded-xl text-lg font-bold shadow-lift transition-transform hover:-translate-y-0.5"
               onClick={handleCalculate}
             >
               <Sparkles /> Regn ut min bærekraftsscore
@@ -226,10 +226,10 @@ export function Calculator() {
             transition={{ type: 'spring', stiffness: 260, damping: 26 }}
             className="fixed inset-x-0 bottom-4 z-30 flex justify-center px-4"
           >
-            <div className="flex items-center gap-4 rounded-full border border-white/40 bg-primary/90 py-2 pr-2 pl-5 text-primary-foreground shadow-lift backdrop-blur-md">
+            <div className="flex items-center gap-4 rounded-full border border-white/40 bg-primary-strong/95 py-2 pr-2 pl-5 text-primary-foreground shadow-lift backdrop-blur-md">
               <span className="text-sm">
                 Dine valg:{' '}
-                <AnimatedNumber value={footprint.personalKg} format={formatKg} className="font-black tabular-nums" />
+                <AnimatedNumber value={footprint.personalKg} format={formatKg} className="font-bold tabular-nums" />
               </span>
               <Button size="sm" variant="secondary" className="rounded-full font-bold" onClick={handleCalculate}>
                 Regn ut
@@ -260,12 +260,12 @@ function StepHeading({ step, id, title, children }: { step: number; id: string; 
     <div className="flex items-start gap-3">
       <span
         aria-hidden
-        className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent to-primary-strong text-sm font-black text-primary-foreground shadow-lift"
+        className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-strong to-primary-ink text-sm font-bold text-primary-foreground shadow-lift"
       >
         {step}
       </span>
       <div>
-        <h2 id={id} className="text-xl font-black tracking-tight text-primary-ink sm:text-2xl">
+        <h2 id={id} className="text-xl font-normal text-primary-ink sm:text-2xl">
           {title}
         </h2>
         <p className="text-sm text-muted-foreground">{children}</p>

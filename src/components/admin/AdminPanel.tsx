@@ -86,7 +86,7 @@ export function AdminPanel() {
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mx-auto max-w-md space-y-4 rounded-lg border bg-card p-6">
-      <h1 className="text-2xl font-black text-primary-ink">{title}</h1>
+      <h1 className="text-2xl font-bold text-primary-ink">{title}</h1>
       {children}
     </section>
   )

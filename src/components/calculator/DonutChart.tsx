@@ -159,7 +159,7 @@ export function DonutChart({ footprint, colors, highlightId, ref }: DonutChartPr
           <AnimatedNumber
             value={personalKg}
             format={formatKg}
-            className="block text-4xl font-black tracking-tight text-primary-ink tabular-nums"
+            className="block text-4xl font-bold text-primary-ink tabular-nums"
           />
         </div>
         {segments.length > 0 && (
@@ -197,9 +197,9 @@ export function DonutChart({ footprint, colors, highlightId, ref }: DonutChartPr
           {/* Tom ring før man har svart */}
           {segments.length === 0 && (
             <g>
-              <path d={innerWall(START, START + FULL)} fill="#ddd6cf" />
-              <path d={outerWall(START, START + FULL)} fill="#e4ded8" />
-              <path d={topFace(START, START + FULL - 0.0001)} fill="var(--muted)" stroke="white" />
+              <path d={innerWall(START, START + FULL)} fill="#cfdcb3" />
+              <path d={outerWall(START, START + FULL)} fill="#dbe6c4" />
+              <path d={topFace(START, START + FULL - 0.0001)} fill="#eef3e3" stroke="white" />
             </g>
           )}
 

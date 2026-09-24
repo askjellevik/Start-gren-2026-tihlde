@@ -2,8 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource/lato/400.css";
+@import "@fontsource/lato/400-italic.css";
 @import "@fontsource/lato/700.css";
-@import "@fontsource/lato/900.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -28,15 +28,17 @@
   /* Kalkulator-spesifikt */
   --oil: #1f1d1a;
   --oil-shine: #4a453d;
-  --oil-shared: #8b8579;               /* felles utslipp i tanken */
+  --oil-shared: #a3b85a;               /* faste tjenester i tanken (grønn) */
   --danger: #b3261e;
-  --average-line: #c46a2b;
+  --average-line: #c62828;
+  --average-label: #a61b1b;          /* tekst i samme farge, høy kontrast */
 
   /* Radius – alle rounded-* skaleres fra denne */
   --brand-radius: 0.5rem;
 
-  /* Fonter. Cultura bruker Lato i brødtekst. Egen overskriftsfont
-     (cultura-bank) er lisensiert og brukes ikke her. */
+  /* Fonter. cultura.no bruker Lato til alt: overskrifter i vekt 400 med
+     normal sperring, knapper og uthevinger i 700. («cultura-bank» er bare
+     en ikonfont.) */
   --brand-font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
   --brand-font-heading: var(--brand-font-sans);
 }
@@ -138,6 +140,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-oil: var(--oil);
+  --color-average-label: var(--average-label);
   --color-oil-shared: var(--oil-shared);
   --color-danger: var(--danger);
   --color-average-line: var(--average-line);
@@ -176,6 +179,8 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+    font-weight: 400;
+    line-height: 1.25;
   }
 }
 

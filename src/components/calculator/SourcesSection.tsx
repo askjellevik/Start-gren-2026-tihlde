@@ -80,7 +80,7 @@ function SourceLink({ name, url }: { name: string | null; url: string | null }) 
   // Kun https-lenker vises som lenker (databasen håndhever det samme).
   if (url && url.startsWith('https://')) {
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className="text-accent underline underline-offset-2">
+      <a href={url} target="_blank" rel="noopener noreferrer" className="text-primary-ink underline underline-offset-2">
         ({name})
       </a>
     )

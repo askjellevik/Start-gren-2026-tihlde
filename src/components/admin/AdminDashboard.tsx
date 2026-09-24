@@ -84,7 +84,7 @@ export function AdminDashboard({ email, onSignOut }: AdminDashboardProps) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-black text-primary-ink">Adminpanel</h1>
+          <h1 className="text-3xl font-bold text-primary-ink">Adminpanel</h1>
           <p className="text-sm text-muted-foreground">
             Innlogget som {email}. Endringer vises i kalkulatoren neste gang siden lastes.
           </p>

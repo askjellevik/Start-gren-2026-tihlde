@@ -171,9 +171,9 @@ export function OilTank({ result, averageKg, targetKg }: OilTankProps) {
             <stop offset="1" stopColor="#0f0e0c" />
           </linearGradient>
           <linearGradient id="shared-body" x1="0" x2="1">
-            <stop offset="0" stopColor="#6f6a60" />
-            <stop offset="0.3" stopColor="#a8a296" />
-            <stop offset="1" stopColor="#66615a" />
+            <stop offset="0" stopColor="#6f8a40" />
+            <stop offset="0.3" stopColor="#b5cc86" />
+            <stop offset="1" stopColor="#62792f" />
           </linearGradient>
           <radialGradient id="oil-surface" cx="0.4" cy="0.35" r="0.8">
             <stop offset="0" stopColor="#6d665b" />
@@ -315,19 +315,19 @@ export function OilTank({ result, averageKg, targetKg }: OilTankProps) {
 
         {/* Fremre halvdel av strekene, med etiketter */}
         <path d={frontHalf(averageY)} fill="none" stroke="var(--average-line)" strokeWidth={3} strokeDasharray="8 5" />
-        <text x={RIGHT + 16} y={averageY + RY - 4} fontSize={13} fontWeight={800} fill="var(--average-line)">
+        <text x={RIGHT + 16} y={averageY + RY - 4} fontSize={13} fontWeight={700} fill="var(--average-label)">
           Snitt
         </text>
-        <text x={RIGHT + 16} y={averageY + RY + 11} fontSize={11} fill="var(--average-line)">
+        <text x={RIGHT + 16} y={averageY + RY + 11} fontSize={11} fill="var(--average-label)">
           {formatKg(averageKg)}
         </text>
         {targetY !== null && targetKg && (
           <g>
             <path d={frontHalf(targetY)} fill="none" stroke="var(--accent)" strokeWidth={3} strokeDasharray="3 4" />
-            <text x={LEFT - 16} y={targetY + RY - 4} fontSize={13} fontWeight={800} fill="var(--accent)" textAnchor="end">
+            <text x={LEFT - 16} y={targetY + RY - 4} fontSize={13} fontWeight={700} fill="var(--primary-ink)" textAnchor="end">
               Mål
             </text>
-            <text x={LEFT - 16} y={targetY + RY + 11} fontSize={11} fill="var(--accent)" textAnchor="end">
+            <text x={LEFT - 16} y={targetY + RY + 11} fontSize={11} fill="var(--primary-ink)" textAnchor="end">
               {formatKg(targetKg)}
             </text>
           </g>
@@ -415,8 +415,8 @@ export function OilTank({ result, averageKg, targetKg }: OilTankProps) {
       <figcaption className="mt-2 max-w-xs text-center text-sm" aria-live="polite">
         {result ? (
           <>
-            <span className="block text-3xl font-black tracking-tight text-primary-ink">{formatKg(total)}</span>
-            <span className={overAverage ? 'font-bold text-danger' : 'font-bold text-accent'}>
+            <span className="block text-3xl font-bold text-primary-ink">{formatKg(total)}</span>
+            <span className={overAverage ? 'font-bold text-danger' : 'font-bold text-primary-ink'}>
               {overAverage ? `${formatKg(diff)} over snittet` : `${formatKg(-diff)} under snittet`}
             </span>
             {overflowing && <span className="block text-danger">Tanken renner over!</span>}

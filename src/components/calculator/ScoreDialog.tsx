@@ -43,7 +43,7 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
 
           <ScoreGauge score={score} versting={versting} />
 
-          <p className={cn('mt-1 text-center text-2xl font-black', versting ? 'text-danger' : 'text-primary-ink')}>
+          <p className={cn('mt-1 text-center text-2xl font-normal', versting ? 'text-danger' : 'text-primary-ink')}>
             {scoreHeadline(score)}
           </p>
           <Dialog.Description className="mt-1 text-center">
@@ -53,9 +53,9 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
           </Dialog.Description>
 
           {easyWin && (
-            <div className="mt-5 flex gap-3 rounded-2xl bg-gradient-to-br from-accent/15 via-accent/5 to-sky-100/60 p-4 ring-1 ring-accent/30">
+            <div className="mt-5 flex gap-3 rounded-2xl bg-gradient-to-br from-accent/20 via-accent/5 to-accent/10 p-4 ring-1 ring-accent/30">
               <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-card shadow-soft">
-                <Snowflake className="size-5 text-sky-600" />
+                <Snowflake className="size-5 text-primary-ink" />
               </span>
               <p>
                 <span className="block text-sm font-bold text-primary-ink">Et enkelt grep</span>
@@ -116,7 +116,7 @@ function ScoreGauge({ score, versting }: { score: number; versting: boolean }) {
         <defs>
           <linearGradient id="gauge-fill" x1="0" x2="1">
             <stop offset="0" stopColor="var(--danger)" />
-            <stop offset="0.45" stopColor="#d9a53b" />
+            <stop offset="0.45" stopColor="#a3b85a" />
             <stop offset="1" stopColor="var(--accent)" />
           </linearGradient>
         </defs>
@@ -138,7 +138,7 @@ function ScoreGauge({ score, versting }: { score: number; versting: boolean }) {
         />
       </svg>
       <div className="absolute inset-x-0 bottom-0 flex flex-col items-center">
-        <span className={cn('text-6xl leading-none font-black tabular-nums', versting ? 'text-danger' : 'text-primary-ink')}>
+        <span className={cn('text-6xl leading-none font-bold tabular-nums', versting ? 'text-danger' : 'text-primary-ink')}>
           <AnimatedNumber value={score} from={0} format={formatScore} duration={duration} />
         </span>
         <span className="text-sm text-muted-foreground">av 10</span>
