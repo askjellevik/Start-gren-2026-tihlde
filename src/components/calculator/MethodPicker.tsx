@@ -46,9 +46,14 @@ export function MethodPicker({
       return next
     })
 
-  // Holder kategorien til aktiv metode åpen når "neste spørsmål" hopper videre.
-  if (activeMethod && !openCategories.has(activeMethod.categoryId)) {
-    setOpenCategories((prev) => new Set(prev).add(activeMethod.categoryId))
+  // Åpner kategorien når man hopper til et spørsmål i en ny kategori ("neste
+  // spørsmål"), men bare ved selve byttet – ellers kan man ikke lukke den igjen.
+  const [lastActiveId, setLastActiveId] = useState(activeMethodId)
+  if (activeMethodId !== lastActiveId) {
+    setLastActiveId(activeMethodId)
+    if (activeMethod && !openCategories.has(activeMethod.categoryId)) {
+      setOpenCategories((prev) => new Set(prev).add(activeMethod.categoryId))
+    }
   }
 
   const activeCategory = data.categories.find((c) => c.id === activeMethod?.categoryId)
@@ -56,12 +61,15 @@ export function MethodPicker({
   return (
     <div className="grid gap-4 md:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]">
       {/* Venstre: nedtrekksmenyer */}
-      <nav aria-label="Utslippsmetoder" className="rounded-lg border bg-card">
+      <nav aria-label="Utslippsmetoder" className="self-start rounded-lg border bg-card">
         <button
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
-          className="flex w-full items-center justify-between rounded-t-lg bg-primary px-4 py-3 text-left font-bold text-primary-foreground"
+          className={cn(
+            'flex w-full items-center justify-between rounded-t-lg bg-primary px-4 py-3 text-left font-bold text-primary-foreground',
+            !menuOpen && 'rounded-b-lg',
+          )}
         >
           Utslippsmetoder
           <ChevronDown className={cn('size-5 transition-transform', menuOpen && 'rotate-180')} />
