@@ -1,28 +1,18 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { isSupabaseConfigured, supabaseAnonKey, supabaseUrl } from '@/lib/config'
+import type { Database } from '@/types/database'
 
-// Erstatt med generert type når skjemaet er spikret:
-//   pnpm dlx supabase gen types typescript --project-id <ref> > src/types/database.ts
-// og importer `Database` derfra.
-type Database = any
+// Supabase er valgfritt for kalkulatoren: mangler miljøvariablene, brukes det
+// innebygde datasettet (src/data/seed.ts). Kun adminpanelet krever databasen.
+//
+// Anon-nøkkelen er offentlig med vilje. Tilgangskontroll skjer med RLS i
+// databasen (supabase/migrations), ikke her.
 
-function requireEnv(name: keyof ImportMetaEnv): string {
-  const value = import.meta.env[name]
-  if (!value) {
-    throw new Error(
-      `Mangler miljøvariabel ${name}. Kopier .env.example til .env.local og fyll inn verdien.`,
-    )
-  }
-  return value
-}
+export { isSupabaseConfigured }
 
 // Modulen evalueres kun én gang, så dette er en singleton.
-export const supabase: SupabaseClient<Database> = createClient<Database>(
-  requireEnv('VITE_SUPABASE_URL'),
-  requireEnv('VITE_SUPABASE_ANON_KEY'),
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-    },
-  },
-)
+export const supabase: SupabaseClient<Database> | null = isSupabaseConfigured
+  ? createClient<Database>(supabaseUrl!, supabaseAnonKey!, {
+      auth: { persistSession: true, autoRefreshToken: true },
+    })
+  : null

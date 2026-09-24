@@ -1,32 +1,41 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource/lato/400.css";
+@import "@fontsource/lato/700.css";
+@import "@fontsource/lato/900.css";
 
 @custom-variant dark (&:is(.dark *));
 
 /* =====================================================================
-   MERKEVARE – bankens profil
-   Bytt verdiene under når merkevarefargene er klare. Resten av appen
-   (Tailwind-klasser som bg-primary, rounded-lg, font-sans og shadcn-
-   komponentene) leser fra disse via tokenene lenger ned.
+   MERKEVARE – Cultura Bank
+   Hentet fra cultura.no (wp-content/themes/cultura/style.css).
+   Resten av appen leser fra disse via tokenene lenger ned.
    ===================================================================== */
 :root {
   /* Farger */
-  --brand-primary: oklch(0.205 0 0);
-  --brand-primary-foreground: oklch(0.985 0 0);
-  --brand-secondary: oklch(0.97 0 0);
-  --brand-secondary-foreground: oklch(0.205 0 0);
-  --brand-accent: oklch(0.97 0 0);
-  --brand-accent-foreground: oklch(0.205 0 0);
-  --brand-background: oklch(1 0 0);
-  --brand-foreground: oklch(0.145 0 0);
+  --brand-primary: #2a4e2a;            /* Cultura mørk grønn */
+  --brand-primary-foreground: #ffffff;
+  --brand-secondary: #f7f2ef;          /* Cultura varm off-white */
+  --brand-secondary-foreground: #2a4e2a;
+  --brand-accent: #728f3f;             /* Cultura olivengrønn */
+  --brand-accent-foreground: #ffffff;
+  --brand-background: #ffffff;
+  --brand-foreground: #42413e;         /* Cultura brødtekst */
+
+  /* Kalkulator-spesifikt */
+  --oil: #1f1d1a;
+  --oil-shine: #4a453d;
+  --oil-shared: #8b8579;               /* felles utslipp i tanken */
+  --danger: #b3261e;
+  --average-line: #c46a2b;
 
   /* Radius – alle rounded-* skaleres fra denne */
-  --brand-radius: 0.625rem;
+  --brand-radius: 0.5rem;
 
-  /* Fonter – husk å importere fonten øverst (f.eks. via @fontsource) */
-  --brand-font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  /* Fonter. Cultura bruker Lato i brødtekst. Egen overskriftsfont
+     (cultura-bank) er lisensiert og brukes ikke her. */
+  --brand-font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
   --brand-font-heading: var(--brand-font-sans);
 }
 
@@ -44,14 +53,14 @@
   --primary-foreground: var(--brand-primary-foreground);
   --secondary: var(--brand-secondary);
   --secondary-foreground: var(--brand-secondary-foreground);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted: #f7f2ef;
+  --muted-foreground: #6b6964;
   --accent: var(--brand-accent);
   --accent-foreground: var(--brand-accent-foreground);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: var(--brand-primary);
+  --border: #e4ded8;
+  --input: #d6cfc8;
+  --ring: var(--brand-accent);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -122,6 +131,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-oil: var(--oil);
+  --color-oil-shared: var(--oil-shared);
+  --color-danger: var(--danger);
+  --color-average-line: var(--average-line);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -157,5 +170,15 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
