@@ -1,4 +1,3 @@
-import { BookOpen, Clock, ShieldCheck } from 'lucide-react'
 import { lazy, Suspense } from 'react'
 import { Calculator } from '@/components/calculator/Calculator'
 
@@ -18,7 +17,6 @@ function App() {
         <div aria-hidden className="absolute inset-0 -z-10">
           <div className="absolute -top-32 -right-24 size-[28rem] rounded-full bg-accent/40 blur-3xl" />
           <div className="absolute -bottom-40 -left-20 size-[24rem] rounded-full bg-[#1b3a1b] blur-3xl" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.07)_1px,transparent_0)] [background-size:22px_22px]" />
         </div>
 
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
@@ -37,28 +35,13 @@ function App() {
 
         {!isAdminRoute && (
           <div className="mx-auto max-w-6xl px-4 pt-6 pb-20 sm:px-6 sm:pt-10 sm:pb-24">
-            <h1 className="max-w-2xl text-4xl leading-[1.05] font-black tracking-tight text-balance sm:text-5xl">
-              Hvor stort er klimafotavtrykket ditt?
+            <h1 className="max-w-3xl text-4xl leading-[1.05] font-black tracking-tight text-balance sm:text-5xl">
+              Hvor bærekraftig er du egentlig i ditt daglige liv?
             </h1>
             <p className="mt-4 max-w-xl text-base text-primary-foreground/80 sm:text-lg">
-              Svar på noen spørsmål om hverdagen din og se hvordan du ligger an mot en gjennomsnittlig
-              nordmann – og hva som faktisk monner.
+              Svar på noen få spørsmål om hverdagen din og se hvordan du ligger an mot en
+              gjennomsnittlig nordmann.
             </p>
-            <ul className="mt-6 flex flex-wrap gap-2 text-sm">
-              {[
-                { icon: Clock, text: 'Tar et par minutter' },
-                { icon: ShieldCheck, text: 'Ingen svar lagres' },
-                { icon: BookOpen, text: 'Tall fra åpne kilder' },
-              ].map(({ icon: Icon, text }) => (
-                <li
-                  key={text}
-                  className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/20 backdrop-blur"
-                >
-                  <Icon aria-hidden className="size-4" />
-                  {text}
-                </li>
-              ))}
-            </ul>
           </div>
         )}
       </header>

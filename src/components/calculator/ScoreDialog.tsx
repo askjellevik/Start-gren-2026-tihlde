@@ -10,7 +10,6 @@ import { formatArea, seaIceM2, shareOfBudget } from '@/lib/calculator/equivalent
 import { isKlimaversting, scoreHeadline, sustainabilityScore } from '@/lib/calculator/score'
 import { cn } from '@/lib/utils'
 import type { CalculatorSettings } from '@/types/calculator'
-import { AverageNote } from './AverageNote'
 
 interface ScoreDialogProps {
   open: boolean
@@ -20,13 +19,12 @@ interface ScoreDialogProps {
   easyWin: EasyWin | null
 }
 
-// Popup med bærekraftsscore 1–10 og de største utslippskildene med tips.
+// Popup med bærekraftsscore 1–10 og ett enkelt grep. Detaljene står i sektordiagrammet.
 export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }: ScoreDialogProps) {
   const averageKg = settings.nationalAverageKg
   const score = sustainabilityScore(footprint.totalKg, averageKg)
   const versting = isKlimaversting(score)
   const diffPct = Math.round((footprint.totalKg / averageKg - 1) * 100)
-  const worst = footprint.methods.slice(0, 3)
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -79,41 +77,6 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
               </p>
             </div>
           )}
-
-          {versting && (
-            <p className="mt-4 rounded-lg bg-danger/10 p-3 text-sm text-danger">
-              Du er i klimaverstingklassen – men det betyr bare at du har mye å spare. Se de største
-              kildene under.
-            </p>
-          )}
-
-          {worst.length > 0 && (
-            <div className="mt-6">
-              <h3 className="font-bold text-primary">Dine største utslippskilder</h3>
-              <ol className="mt-2 space-y-3">
-                {worst.map(({ method, kgPerYear }, i) => (
-                  <li key={method.id} className="rounded-xl bg-muted/70 p-3 ring-1 ring-border/60">
-                    <div className="flex justify-between gap-2 font-bold">
-                      <span>
-                        {i + 1}. {method.name}
-                      </span>
-                      <span className="tabular-nums">{formatKg(kgPerYear)}</span>
-                    </div>
-                    {method.tip && <p className="mt-1 text-sm text-muted-foreground">{method.tip}</p>}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          {footprint.answeredCount < footprint.methodCount && (
-            <p className="mt-4 text-xs text-muted-foreground">
-              Du har svart på {footprint.answeredCount} av {footprint.methodCount} spørsmål. Ubesvarte
-              spørsmål teller som null utslipp.
-            </p>
-          )}
-
-          <AverageNote settings={settings} className="mt-4" />
 
           <Dialog.Close asChild>
             <Button className="mt-6 w-full" size="lg">
