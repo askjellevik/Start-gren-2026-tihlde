@@ -121,6 +121,8 @@ export async function saveSettings(input: CalculatorSettings): Promise<void> {
       national_average_source_url: input.nationalAverageSourceUrl,
       baseline_kg: input.baselineKg,
       baseline_label: input.baselineLabel,
+      target_kg: input.targetKg,
+      target_label: input.targetLabel,
     })
     .eq('id', true)
     .select('id')

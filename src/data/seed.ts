@@ -3,35 +3,43 @@ import type { CalculatorData } from '@/types/calculator'
 // Innebygd datasett. Brukes når databasen ikke er konfigurert eller ikke svarer,
 // og er kilden til supabase/seed.sql (se scripts/generate-seed-sql.ts).
 //
-// Faktorene er hentet fra kildene som står på hver metode (per september 2026).
-// Der kilden oppgir kg per kg mat eller gram per km, er regnestykket skrevet i
-// kommentaren. Flyfaktorene er uten høydeeffekt (ikke-CO2), slik SSB og DEFRA
-// oppgir dem – reell klimaeffekt kan være nær dobbelt så høy.
+// Sammenligningsgrunnlag: livsstilsfotavtrykket til en gjennomsnittlig nordmann
+// (Hot or Cool Institute 2025, tabell 3.1): mat 2,1 + bolig 1,0 + transport 2,8
+// + varer 0,4 + fritid 1,0 + tjenester 0,5 = 7,8 tonn CO2e per år. Dette er
+// utslipp fra det du selv forbruker – offentlig sektor og investeringer er ikke
+// med. Faktorene under er valgt slik at et typisk svarsett havner nær 7,8 tonn.
+//
+// Utregningen bak hver faktor står i kommentaren. Flyfaktorene er uten
+// høydeeffekt (ikke-CO2), slik SSB og DEFRA oppgir dem.
 
-const OWID_FOOD = 'https://ourworldindata.org/environmental-impacts-of-food'
-const MDIR_FORBRUK =
-  'https://www.miljodirektoratet.no/aktuelt/fagmeldinger/2024/januar-2024/utslipp-av-klimagasser-fra-norsk-forbruk-er-beregnet/'
+const HOC_2025 =
+  'https://hotorcool.org/wp-content/uploads/2025/10/A_Climate_for_Sufficiency_report_FULL_REPORT-1.pdf'
+const OWID_FOOD = 'https://ourworldindata.org/grapher/ghg-per-kg-poore'
 const SSB_TRANSPORT =
   'https://www.ssb.no/transport-og-reiseliv/artikler-og-publikasjoner/mindre-utslipp-fra-veitrafikk-fly-og-tog'
-const SSB_BIL =
-  'https://www.ssb.no/transport-og-reiseliv/artikler-og-publikasjoner/mindre-utslipp-per-kjorte-kilometer'
+const ICCT_2025 = 'https://theicct.org/publication/electric-cars-life-cycle-analysis-emissions-europe-jul25/'
 const DEFRA =
   'https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting'
-const NVE_STROM = 'https://www.nve.no/energi/energisystem/energibruk/stroemdeklarasjoner/'
+const HAFSLUND =
+  'https://www.hafslund.no/no/produkter-og-tjenester/fjernvarme/nokkeltall-for-avfallsforbrenning-og-fjernvarmeproduksjon'
 const CONCITO_KLAER = 'https://concito.dk/klimapakker/forbrug/toejets-klimaaftryk'
-const MDIR_AVFALL =
-  'https://www.miljodirektoratet.no/ansvarsomrader/klima/klimakvoter/avfallsforbrenningsanlegg/'
+const APPLE_IPHONE =
+  'https://www.apple.com/environment/pdf/products/iphone/iPhone_16_and_iPhone_16_Plus_PER_Sept2024.pdf'
+const APPLE_MACBOOK = 'https://www.apple.com/environment/pdf/products/notebooks/M3_MacBook_Air_PER_March2024.pdf'
+const GRONT_PUNKT = 'https://www.grontpunkt.no/aktuelt/nyheter/samler-inn-for-lite-plastemballasje'
 
 export const seedData: CalculatorData = {
   settings: {
-    // 70 mill. tonn / innbyggere = 13 tonn CO2e per person (forbruksbasert, 2020).
-    nationalAverageKg: 13000,
-    nationalAverageSource: 'Miljødirektoratet: utslipp fra norsk forbruk (2020-tall, publisert 2024)',
-    nationalAverageSourceUrl: MDIR_FORBRUK,
-    // Offentlig sektor (~10 %) + investeringer i bygg og infrastruktur (~33 %)
-    // av 13 tonn ≈ 5,6 tonn. Dette "har" alle, uansett livsstil.
-    baselineKg: 5600,
-    baselineLabel: 'Felles utslipp (offentlige tjenester, bygg og infrastruktur)',
+    nationalAverageKg: 7800,
+    nationalAverageSource: 'Hot or Cool Institute (2025): livsstilsfotavtrykk for en gjennomsnittlig nordmann',
+    nationalAverageSourceUrl: HOC_2025,
+    // Tjenester (helse, utdanning, kommunikasjon m.m.) er 0,5 t i snittet og
+    // noe den enkelte i liten grad velger selv. Legges til alle.
+    baselineKg: 500,
+    baselineLabel: 'Tjenester alle bruker (helse, utdanning, kommunikasjon)',
+    // IPCC-forenlig tak for livsstilsfotavtrykk i 2035 (1,5 °C), fra samme rapport.
+    targetKg: 1100,
+    targetLabel: '1,5-gradersmålet 2035',
   },
 
   categories: [
@@ -39,10 +47,10 @@ export const seedData: CalculatorData = {
     { id: 'transport', name: 'Reise og transport', description: 'Hverdagsreiser og ferier.', color: '#c46a2b', sortOrder: 2 },
     {
       id: 'bolig', name: 'Bolig og energi',
-      description: 'Norsk strøm har svært lave utslipp, så boligen teller lite. Bygging og materialer ligger i felles utslipp.',
+      description: 'Norsk strøm har lave utslipp, så det er mest bygging og vedlikehold av boligen som teller.',
       color: '#3f6f8f', sortOrder: 3,
     },
-    { id: 'forbruk', name: 'Forbruk og shopping', description: 'Ting du kjøper og tjenester du bruker.', color: '#8a5a9e', sortOrder: 4 },
+    { id: 'forbruk', name: 'Forbruk og fritid', description: 'Ting du kjøper og hva du gjør på fritiden.', color: '#8a5a9e', sortOrder: 4 },
     { id: 'avfall', name: 'Daglige rutiner (søppel)', description: 'Avfall og kildesortering.', color: '#8a7a5a', sortOrder: 5 },
   ],
 
@@ -59,7 +67,7 @@ export const seedData: CalculatorData = {
         { label: '2 ganger', value: 2 }, { label: '3 ganger', value: 3 }, { label: '4 eller flere', value: 5 },
       ],
       tip: 'Bytt én rødt kjøtt-middag i uka med kylling, fisk eller bønner – det sparer rundt 250 kg i året.',
-      sourceName: 'Our World in Data / Poore & Nemecek (2018): storfe 33,3 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 1,
+      sourceName: 'Poore & Nemecek (2018) via Our World in Data: storfe 33,3 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 1,
     },
     {
       // Snitt av svin 12,3 og kylling 9,9 kg/kg × 0,15 kg.
@@ -71,7 +79,7 @@ export const seedData: CalculatorData = {
         { label: '3–4 ganger', value: 3.5 }, { label: '5 eller flere', value: 6 },
       ],
       tip: null,
-      sourceName: 'Our World in Data / Poore & Nemecek (2018): svin 12,3 og kylling 9,9 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 2,
+      sourceName: 'Poore & Nemecek (2018) via Our World in Data: svin 12,3 og kylling 9,9 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 2,
     },
     {
       // Oppdrettsfisk 13,6 kg/kg × 0,15 kg (globalt snitt; norsk laks ligger lavere).
@@ -83,7 +91,7 @@ export const seedData: CalculatorData = {
         { label: '2 ganger', value: 2 }, { label: '3 eller flere', value: 3.5 },
       ],
       tip: null,
-      sourceName: 'Our World in Data / Poore & Nemecek (2018): oppdrettsfisk 13,6 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 3,
+      sourceName: 'Poore & Nemecek (2018) via Our World in Data: oppdrettsfisk 13,6 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 3,
     },
     {
       // Tofu 3,2 kg/kg × 0,15 kg + ca. 0,2 kg grønnsaker à 0,5 kg/kg.
@@ -95,7 +103,7 @@ export const seedData: CalculatorData = {
         { label: '3–4', value: 3.5 }, { label: '5 eller flere', value: 6 },
       ],
       tip: null,
-      sourceName: 'Our World in Data / Poore & Nemecek (2018): tofu 3,2 og grønnsaker ca. 0,5 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 4,
+      sourceName: 'Poore & Nemecek (2018) via Our World in Data: tofu 3,2 og grønnsaker ca. 0,5 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 4,
     },
     {
       // Glass melk 0,25 kg × 3,15 = 0,79; 30 g ost × 23,9 = 0,72.
@@ -107,35 +115,48 @@ export const seedData: CalculatorData = {
         { label: '2 om dagen', value: 14 }, { label: '3 eller flere om dagen', value: 24 },
       ],
       tip: 'Havre- og soyadrikk har rundt en tredjedel av utslippene til kumelk.',
-      sourceName: 'Our World in Data / Poore & Nemecek (2018): melk 3,15 og ost 23,9 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 5,
+      sourceName: 'Poore & Nemecek (2018) via Our World in Data: melk 3,15 og ost 23,9 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 5,
+    },
+    {
+      // Faktor 1: verdien er kg CO2e per år. Nordmenns kosthold totalt er 2,1 t
+      // (Hot or Cool). Middager og meieri over utgjør ca. 1,3 t for et typisk
+      // svarsett; resten (ca. 0,8 t) er frokost, lunsj, mellommåltider og drikke.
+      id: 'ovrig-mat', categoryId: 'mat', name: 'Frokost, lunsj og snacks',
+      question: 'Hvordan er resten av kostholdet ditt (frokost, lunsj, mellommåltider, drikke)?',
+      period: 'year', unitLabel: 'kg CO2e', kgCo2ePerUnit: 1,
+      choices: [
+        { label: 'Mest plantebasert', value: 450 },
+        { label: 'Som folk flest', value: 800 },
+        { label: 'Mye kjøttpålegg, ost, kaffe og snacks', value: 1200 },
+      ],
+      tip: null,
+      sourceName: 'Hot or Cool Institute (2025): nordmenns kosthold 2,1 t CO2e per år, fratrukket middager og meieri', sourceUrl: HOC_2025, sortOrder: 6,
     },
 
     // --- Transport ---------------------------------------------------------
     {
-      // SSB: bensin 96 og diesel 85 g per personkm ved 1,7 personer per bil
-      // ≈ 150 g per kjørte km. + ca. 40 g/km for produksjon av bilen.
+      // ICCT 2025: 235 g CO2e/km over hele livsløpet (produksjon, drivstoff, kjøring).
       id: 'fossilbil', categoryId: 'transport', name: 'Bensin- eller dieselbil',
       question: 'Hvor mange kilometer kjører du med bensin- eller dieselbil i uka?',
-      period: 'week', unitLabel: 'km', kgCo2ePerUnit: 0.19,
+      period: 'week', unitLabel: 'km', kgCo2ePerUnit: 0.235,
       choices: [
         { label: 'Ingen', value: 0 }, { label: 'Litt (ca. 25 km)', value: 25 },
         { label: 'Til og fra jobb (ca. 150 km)', value: 150 }, { label: 'Mye (ca. 400 km)', value: 400 },
       ],
       tip: 'Samkjøring, kollektiv eller elbil på jobbreisen kutter mye.',
-      sourceName: 'SSB: ca. 150 g CO2 per kjørte km (bensin/diesel) + produksjon av bil', sourceUrl: SSB_BIL, sortOrder: 1,
+      sourceName: 'ICCT (2025): bensinbil 235 g CO2e per km, hele livsløpet', sourceUrl: ICCT_2025, sortOrder: 1,
     },
     {
-      // Produksjon inkl. batteri ca. 65 g/km over bilens levetid
-      // + 0,18 kWh/km × 11,9 g/kWh (NVE 2024) ≈ 2 g/km.
+      // ICCT 2025: elbil på fornybar strøm 52 g CO2e/km (norsk strøm er ~95 % fornybar).
       id: 'elbil', categoryId: 'transport', name: 'Elbil',
       question: 'Hvor mange kilometer kjører du med elbil i uka?',
-      period: 'week', unitLabel: 'km', kgCo2ePerUnit: 0.07,
+      period: 'week', unitLabel: 'km', kgCo2ePerUnit: 0.052,
       choices: [
         { label: 'Ingen', value: 0 }, { label: 'Litt (ca. 25 km)', value: 25 },
         { label: 'Til og fra jobb (ca. 150 km)', value: 150 }, { label: 'Mye (ca. 400 km)', value: 400 },
       ],
       tip: null,
-      sourceName: 'NVE: norsk strøm 11,9 g CO2e/kWh (2024) + produksjon av bil og batteri', sourceUrl: NVE_STROM, sortOrder: 2,
+      sourceName: 'ICCT (2025): elbil på fornybar strøm 52 g CO2e per km, hele livsløpet', sourceUrl: ICCT_2025, sortOrder: 2,
     },
     {
       id: 'buss', categoryId: 'transport', name: 'Buss',
@@ -209,34 +230,36 @@ export const seedData: CalculatorData = {
 
     // --- Bolig og energi (per år) -----------------------------------------
     {
-      // Ca. 135 kWh per m² per år (SSB: ca. 16 000 kWh per husholdning)
-      // × 11,9 g CO2e/kWh (NVE 2024) ≈ 1,6 kg per m².
-      id: 'boligareal', categoryId: 'bolig', name: 'Strøm i boligen',
+      // Hot or Cool: boligareal (bygging og vedlikehold) 0,6 t for en nordmann
+      // med ca. 55 m² → ca. 11 kg per m². Strøm: ca. 135 kWh/m² × 11,9 g/kWh
+      // (NVE 2024) ≈ 1,6 kg per m². Sum ≈ 12,6 kg per m².
+      id: 'boligareal', categoryId: 'bolig', name: 'Boligareal',
       question: 'Hvor mange kvadratmeter bolig har du per person i husstanden?',
-      period: 'year', unitLabel: 'm²', kgCo2ePerUnit: 1.6,
+      period: 'year', unitLabel: 'm²', kgCo2ePerUnit: 12.6,
       choices: [
         { label: 'Under 25 m²', value: 20 }, { label: '25–40 m²', value: 32 },
         { label: '40–60 m²', value: 50 }, { label: 'Over 60 m²', value: 75 },
       ],
-      tip: null,
-      sourceName: 'NVE: 11,9 g CO2e per kWh (2024), ca. 135 kWh per m² per år', sourceUrl: NVE_STROM, sortOrder: 1,
+      tip: 'Å dele bolig med flere er et av de mest effektive klimatiltakene – utslippene fordeles.',
+      sourceName: 'Hot or Cool Institute (2025): boligareal 0,6 t per nordmann; NVE: strøm 11,9 g CO2e/kWh', sourceUrl: HOC_2025, sortOrder: 1,
     },
     {
-      // Faktor 1: verdien i hvert valg er kg CO2e per år i tillegg til strøm.
-      // Oljefyr er forbudt i Norge siden 2020 og er derfor ikke med.
+      // Faktor 1: verdien er kg CO2e per år i tillegg til strøm, ved ca. 5000 kWh
+      // varme per person. Fjernvarme 20,8 g/kWh (Hafslund 2025). Gass (propan)
+      // ca. 0,23 kg/kWh (DEFRA). Olje og parafin er forbudt til oppvarming siden 2020.
       id: 'oppvarming', categoryId: 'bolig', name: 'Oppvarming',
       question: 'Hvordan varmes boligen din hovedsakelig opp?',
       period: 'year', unitLabel: 'kg CO2e', kgCo2ePerUnit: 1,
       choices: [
         { label: 'Strøm (varmepumpe, panelovner, gulvvarme)', value: 0 },
         { label: 'Fjernvarme', value: 100 }, { label: 'Vedfyring', value: 75 },
-        { label: 'Gass eller parafin', value: 1250 },
+        { label: 'Gass', value: 1150 },
       ],
-      tip: 'Bytt ut gass eller parafin med varmepumpe – Enova gir støtte.',
-      sourceName: 'Anslag: ca. 5000 kWh varme per person; gass ca. 0,25 kg CO2e/kWh', sourceUrl: null, sortOrder: 2,
+      tip: 'Bytt ut gassfyring med varmepumpe – Enova gir støtte.',
+      sourceName: 'Hafslund: fjernvarme 20,8 g CO2e/kWh (2025); DEFRA: propan ca. 0,23 kg/kWh; ca. 5000 kWh varme per person', sourceUrl: HAFSLUND, sortOrder: 2,
     },
 
-    // --- Forbruk -----------------------------------------------------------
+    // --- Forbruk og fritid -------------------------------------------------
     {
       id: 'klaer', categoryId: 'forbruk', name: 'Nye klær',
       question: 'Hvor mange nye klesplagg kjøper du i måneden?',
@@ -249,44 +272,44 @@ export const seedData: CalculatorData = {
       sourceName: 'CONCITO: t-skjorte ca. 7, jeans 11–20 kg CO2e per plagg', sourceUrl: CONCITO_KLAER, sortOrder: 1,
     },
     {
-      id: 'elektronikk', categoryId: 'forbruk', name: 'Elektronikk',
-      question: 'Hvor mange nye mobiler, PC-er eller nettbrett kjøper du i året?',
-      period: 'year', unitLabel: 'enhet', kgCo2ePerUnit: 150,
+      id: 'mobil', categoryId: 'forbruk', name: 'Ny mobil eller nettbrett',
+      question: 'Hvor mange nye mobiler eller nettbrett kjøper du i året?',
+      period: 'year', unitLabel: 'enhet', kgCo2ePerUnit: 56,
       choices: [
-        { label: 'Ingen', value: 0 }, { label: '1', value: 1 },
-        { label: '2', value: 2 }, { label: '3 eller flere', value: 4 },
+        { label: 'Ingen', value: 0 }, { label: 'Én hvert 3. år', value: 0.33 },
+        { label: 'Én i året', value: 1 }, { label: '2 eller flere', value: 2.5 },
       ],
       tip: 'Å bruke mobilen ett år ekstra er et av de enkleste kuttene.',
-      sourceName: 'Produksjon: mobil 80–110 kg, bærbar PC 200–350 kg CO2e (produsenters livsløpsanalyser)', sourceUrl: null, sortOrder: 2,
+      sourceName: 'Apple Product Environmental Report: iPhone 16 (128 GB) 56 kg CO2e', sourceUrl: APPLE_IPHONE, sortOrder: 2,
     },
     {
-      id: 'storre-innkjop', categoryId: 'forbruk', name: 'Møbler og hvitevarer',
-      question: 'Hvor mange større innkjøp (møbler, hvitevarer) gjør du i året?',
-      period: 'year', unitLabel: 'innkjøp', kgCo2ePerUnit: 200,
+      id: 'pc', categoryId: 'forbruk', name: 'Ny PC',
+      question: 'Hvor ofte kjøper du ny PC?',
+      period: 'year', unitLabel: 'PC', kgCo2ePerUnit: 158,
       choices: [
-        { label: 'Ingen', value: 0 }, { label: '1', value: 1 },
-        { label: '2–3', value: 2.5 }, { label: '4 eller flere', value: 5 },
+        { label: 'Sjeldnere enn hvert 5. år', value: 0.15 }, { label: 'Hvert 3.–4. år', value: 0.3 },
+        { label: 'Annethvert år', value: 0.5 }, { label: 'Hvert år', value: 1 },
       ],
       tip: null,
-      sourceName: 'Anslag fra livsløpsanalyser (sofa ca. 100–200, kjøleskap ca. 200–400 kg CO2e)', sourceUrl: null, sortOrder: 3,
+      sourceName: 'Apple Product Environmental Report: MacBook Air M3 158 kg CO2e', sourceUrl: APPLE_MACBOOK, sortOrder: 3,
     },
     {
-      // Husholdningenes andel (~6,5 t) delt på forbruk per person gir ca. 0,02 kg
-      // per krone i snitt; tjenester ligger lavere enn varer.
-      id: 'tjenester', categoryId: 'forbruk', name: 'Fritid, restaurant og tjenester',
-      question: 'Hvor mye bruker du på fritid, restaurantbesøk og tjenester i måneden?',
-      period: 'month', unitLabel: 'kr', kgCo2ePerUnit: 0.015,
+      // Faktor 1: verdien er kg CO2e per år. Fritid (kultur, hobby, restaurant,
+      // hotell) er 1,0 t for en gjennomsnittlig nordmann.
+      id: 'fritid', categoryId: 'forbruk', name: 'Fritid, restaurant og hotell',
+      question: 'Hvor mye bruker du på restaurant, hotell, hobbyer og opplevelser, sammenlignet med folk flest?',
+      period: 'year', unitLabel: 'kg CO2e', kgCo2ePerUnit: 1,
       choices: [
-        { label: 'Under 1 000 kr', value: 500 }, { label: '1 000–3 000 kr', value: 2000 },
-        { label: '3 000–6 000 kr', value: 4500 }, { label: 'Over 6 000 kr', value: 8000 },
+        { label: 'Mye mindre', value: 400 }, { label: 'Omtrent som folk flest', value: 1000 },
+        { label: 'Mer', value: 1500 }, { label: 'Mye mer', value: 2200 },
       ],
       tip: null,
-      sourceName: 'Utledet fra Miljødirektoratet: husholdningers utslipp per forbrukskrone', sourceUrl: MDIR_FORBRUK, sortOrder: 4,
+      sourceName: 'Hot or Cool Institute (2025): fritid 1,0 t CO2e per nordmann per år', sourceUrl: HOC_2025, sortOrder: 4,
     },
 
     // --- Avfall ------------------------------------------------------------
     {
-      // Ca. 4 kg per pose × ca. 0,5 kg fossil CO2 per kg brent restavfall.
+      // Ca. 4 kg per pose × 0,51 kg fossil CO2 per kg brent avfall.
       id: 'restavfall', categoryId: 'avfall', name: 'Restavfall',
       question: 'Hvor mange ganger i uka tar du ut en full pose restavfall?',
       period: 'week', unitLabel: 'pose', kgCo2ePerUnit: 2.0,
@@ -295,19 +318,20 @@ export const seedData: CalculatorData = {
         { label: '3–4 ganger', value: 3.5 }, { label: '5 eller flere', value: 6 },
       ],
       tip: null,
-      sourceName: 'Miljødirektoratet (avfallsforbrenning): ca. 0,5 kg CO2 per kg restavfall, ca. 4 kg per pose', sourceUrl: MDIR_AVFALL, sortOrder: 1,
+      sourceName: 'Hafslund (Klemetsrud/Haraldrud 2025): 0,51 t fossil CO2 per tonn avfall; ca. 4 kg per pose', sourceUrl: HAFSLUND, sortOrder: 1,
     },
     {
-      // Faktor 1: verdien er ekstra kg CO2e per år. Ca. 25 kg plastemballasje
-      // per person × ca. 2,7 kg CO2 per kg plast som brennes i stedet for å gjenvinnes.
+      // Faktor 1: verdien er ekstra kg CO2e per år. Nordmenn bruker ca. 18 kg
+      // plastemballasje i året (Grønt Punkt). Brent i stedet for gjenvunnet gir
+      // ca. 2,7 kg fossil CO2 per kg → ca. 50 kg.
       id: 'kildesortering', categoryId: 'avfall', name: 'Kildesortering',
       question: 'Kildesorterer du plast, papir, glass og matavfall?',
       period: 'year', unitLabel: 'kg CO2e', kgCo2ePerUnit: 1,
       choices: [
-        { label: 'Ja, alt', value: 0 }, { label: 'Delvis', value: 35 }, { label: 'Nei', value: 70 },
+        { label: 'Ja, alt', value: 0 }, { label: 'Delvis', value: 25 }, { label: 'Nei', value: 50 },
       ],
       tip: 'Kildesortering er gratis og tar et par minutter om dagen.',
-      sourceName: 'Anslag: ca. 25 kg plast per person, ca. 2,7 kg CO2 per kg plast som brennes', sourceUrl: null, sortOrder: 2,
+      sourceName: 'Grønt Punkt: ca. 18 kg plastemballasje per person i året; ca. 2,7 kg CO2 per kg plast som brennes', sourceUrl: GRONT_PUNKT, sortOrder: 2,
     },
   ],
 }

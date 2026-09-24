@@ -78,13 +78,22 @@ scripts/
 
 1. Hvert svar er et **antall per periode** (f.eks. 3 middager per uke).
 2. Antall × **kg CO₂e per enhet** × perioder per år (uke 52, måned 12, år 1) = kg per år.
-3. Totalen er summen av dine valg + **felles utslipp** (5,6 tonn: offentlig sektor og
-   investeringer, som alle har uansett livsstil).
-4. Totalen sammenlignes med **snittet på 13 tonn** (Miljødirektoratet, forbruksbasert, 2020).
+3. Totalen er summen av dine valg + et **fast tillegg på 0,5 tonn** for tjenester alle bruker
+   (helse, utdanning, kommunikasjon).
+4. Totalen sammenlignes med **livsstilsfotavtrykket til en gjennomsnittlig nordmann: 7,8 tonn**
+   (Hot or Cool Institute 2025: mat 2,1 · bolig 1,0 · transport 2,8 · varer 0,4 · fritid 1,0 ·
+   tjenester 0,5). Tanken viser også **1,5-gradersmålet for 2035: 1,1 tonn**.
 5. **Score** = 5,5 − 4,5 × log₂(total / snitt), avrundet og begrenset til 1–10.
    Halvparten av snittet gir 10, likt snittet gir 6, dobbelt så mye gir 1.
 
+**Hvorfor ikke 8 eller 13 tonn?** 8 tonn er Norges territorielle utslipp (44,6 mill. tonn i 2024,
+SSB) delt på innbyggere – inkludert olje- og gassproduksjon for eksport, men uten import.
+13 tonn er alt forbruk inkludert offentlig sektor og investeringer (Miljødirektoratet).
+Ingen av dem måler det én person påvirker, så de passer ikke som sammenligning i en
+personlig kalkulator.
+
 Alle faktorer og kilder står i `src/data/seed.ts` og vises i appen under «Kilder og metode».
+En test (`engine.test.ts`) sjekker at et typisk svarsett havner nær 7,8 tonn.
 
 ## Sikkerhet
 

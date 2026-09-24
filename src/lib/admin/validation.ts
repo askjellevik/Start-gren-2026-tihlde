@@ -32,6 +32,8 @@ export interface SettingsDraft {
   nationalAverageSourceUrl: string
   baselineKg: string
   baselineLabel: string
+  targetKg: string
+  targetLabel: string
 }
 
 export type Errors<T> = Partial<Record<keyof T, string>>
@@ -117,6 +119,11 @@ export function validateSettings(d: SettingsDraft): Errors<SettingsDraft> {
   if (d.nationalAverageSource.length > 300) errors.nationalAverageSource = 'Maks 300 tegn'
   errors.nationalAverageSourceUrl = checkUrl(d.nationalAverageSourceUrl)
   errors.baselineLabel = checkLength(d.baselineLabel, 1, 120, 'Beskrivelse')
+  if (d.targetKg.trim() !== '') {
+    const target = parseNumber(d.targetKg)
+    if (target === null || target < 0 || target > 1000000) errors.targetKg = 'Oppgi et tall, eller la feltet stå tomt'
+  }
+  if (d.targetLabel.length > 120) errors.targetLabel = 'Maks 120 tegn'
   return stripEmpty(errors)
 }
 

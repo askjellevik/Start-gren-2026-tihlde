@@ -35,13 +35,16 @@ export interface EmissionMethod {
 }
 
 export interface CalculatorSettings {
-  /** Gjennomsnittlig årlig fotavtrykk per nordmann, kg CO2e. */
+  /** Gjennomsnittlig årlig livsstilsfotavtrykk per nordmann, kg CO2e. */
   nationalAverageKg: number
   nationalAverageSource: string | null
   nationalAverageSourceUrl: string | null
-  /** Felles utslipp alle har (offentlig sektor, investeringer), kg CO2e/år. */
+  /** Fast tillegg alle får, uansett svar (tjenester som helse og utdanning), kg CO2e/år. */
   baselineKg: number
   baselineLabel: string
+  /** Klimamål å sammenligne med, f.eks. 1,5-gradersmålet. Vises som egen strek i tanken. */
+  targetKg: number | null
+  targetLabel: string | null
 }
 
 export interface CalculatorData {

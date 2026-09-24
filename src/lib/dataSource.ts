@@ -108,6 +108,8 @@ async function fetchFromDatabase(): Promise<CalculatorData> {
       nationalAverageSourceUrl: settingsRow.national_average_source_url,
       baselineKg: Number(settingsRow.baseline_kg),
       baselineLabel: settingsRow.baseline_label,
+      targetKg: settingsRow.target_kg === null ? null : Number(settingsRow.target_kg),
+      targetLabel: settingsRow.target_label,
     },
   }
 }

@@ -164,7 +164,8 @@ export function Calculator() {
             3. Mot snittet
           </h2>
           <p className="mb-2 text-sm text-muted-foreground">
-            Streken er snittet for en nordmann. Fyller du mer, renner det over.
+            Den oransje streken er snittet for en nordmann, den grønne er{' '}
+            {data.settings.targetLabel?.toLowerCase() ?? 'klimamålet'}.
           </p>
           {snapshotStale && (
             <p className="mb-2 rounded-md bg-background p-2 text-xs">
@@ -174,6 +175,7 @@ export function Calculator() {
           <OilTank
             result={snapshot ? { totalKg: snapshot.totalKg, baselineKg: snapshot.baselineKg } : null}
             averageKg={data.settings.nationalAverageKg}
+            targetKg={data.settings.targetKg}
           />
         </section>
       </div>

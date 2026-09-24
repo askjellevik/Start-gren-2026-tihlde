@@ -179,6 +179,8 @@ export type Database = {
           national_average_kg: number
           national_average_source: string | null
           national_average_source_url: string | null
+          target_kg: number | null
+          target_label: string | null
           updated_at: string
         }
         Insert: {
@@ -188,6 +190,8 @@ export type Database = {
           national_average_kg: number
           national_average_source?: string | null
           national_average_source_url?: string | null
+          target_kg?: number | null
+          target_label?: string | null
           updated_at?: string
         }
         Update: {
@@ -197,6 +201,8 @@ export type Database = {
           national_average_kg?: number
           national_average_source?: string | null
           national_average_source_url?: string | null
+          target_kg?: number | null
+          target_label?: string | null
           updated_at?: string
         }
         Relationships: []

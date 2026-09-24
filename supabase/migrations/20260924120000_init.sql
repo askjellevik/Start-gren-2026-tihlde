@@ -90,6 +90,8 @@ create table public.settings (
   national_average_source_url  text check (national_average_source_url is null or (national_average_source_url ~ '^https://\S+$' and length(national_average_source_url) <= 500)),
   baseline_kg                  numeric not null default 0 check (baseline_kg >= 0 and baseline_kg <= 1000000),
   baseline_label               text not null default 'Felles utslipp' check (length(baseline_label) between 1 and 120),
+  target_kg                    numeric check (target_kg is null or (target_kg >= 0 and target_kg <= 1000000)),
+  target_label                 text check (length(target_label) <= 120),
   updated_at                   timestamptz not null default now()
 );
 

@@ -48,15 +48,16 @@ describe('computeFootprint', () => {
 
   it('et typisk svarsett havner i nærheten av snittet', () => {
     const typical = {
-      'rodt-kjott': 2, 'hvitt-kjott': 1, fisk: 1, vegetar: 1, meieri: 2,
+      'rodt-kjott': 2, 'hvitt-kjott': 1, fisk: 1, vegetar: 1, meieri: 2, 'ovrig-mat': 1,
       fossilbil: 2, buss: 1, 'fly-innland': 1, 'fly-europa': 1,
-      boligareal: 2, oppvarming: 2, klaer: 2, elektronikk: 1, 'storre-innkjop': 1, tjenester: 1,
+      boligareal: 2, oppvarming: 0, klaer: 2, mobil: 1, pc: 1, fritid: 1,
       restavfall: 1, kildesortering: 1,
     }
     const fp = computeFootprint(seedData, typical)
     const ratio = fp.totalKg / seedData.settings.nationalAverageKg
-    expect(ratio).toBeGreaterThan(0.7)
-    expect(ratio).toBeLessThan(1.3)
+    // Et typisk svarsett skal havne nær snittet (7,8 t), ellers er faktorene skjeve.
+    expect(ratio).toBeGreaterThan(0.85)
+    expect(ratio).toBeLessThan(1.15)
   })
 })
 

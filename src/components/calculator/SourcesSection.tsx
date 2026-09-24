@@ -1,5 +1,5 @@
 import type { CalculatorData } from '@/types/calculator'
-import { PERIOD_LABEL } from '@/lib/calculator/engine'
+import { formatKg, PERIOD_LABEL } from '@/lib/calculator/engine'
 
 // "Kilder og metode": viser hvor hvert tall kommer fra.
 export function SourcesSection({ data }: { data: CalculatorData }) {
@@ -9,12 +9,30 @@ export function SourcesSection({ data }: { data: CalculatorData }) {
       <summary className="cursor-pointer font-bold text-primary">Kilder og metode</summary>
       <div className="mt-4 space-y-4 text-sm">
         <p>
-          Alle svar regnes om til kilo CO₂-ekvivalenter per år. Snittet for en nordmann er{' '}
-          <strong>{Math.round(settings.nationalAverageKg / 100) / 10} tonn</strong>{' '}
+          Alle svar regnes om til kilo CO₂-ekvivalenter per år og sammenlignes med{' '}
+          <strong>livsstilsfotavtrykket</strong> til en gjennomsnittlig nordmann:{' '}
+          <strong>{formatKg(settings.nationalAverageKg)}</strong>{' '}
           <SourceLink name={settings.nationalAverageSource} url={settings.nationalAverageSourceUrl} />.
-          I tillegg til dine valg får alle et felles utslipp på{' '}
-          <strong>{Math.round(settings.baselineKg / 100) / 10} tonn</strong> ({settings.baselineLabel.toLowerCase()}),
-          fordi dette er en del av snittet uansett hvordan du lever.
+          Det er utslippene fra det du selv spiser, reiser, bor og kjøper – ikke offentlig sektor
+          eller investeringer i veier og bygg.
+          {settings.baselineKg > 0 && (
+            <>
+              {' '}Alle får i tillegg <strong>{formatKg(settings.baselineKg)}</strong> for{' '}
+              {settings.baselineLabel.toLowerCase()}, som er vanskelig å påvirke selv.
+            </>
+          )}
+          {settings.targetKg && (
+            <>
+              {' '}Den grønne streken i tanken viser {settings.targetLabel?.toLowerCase() ?? 'klimamålet'}:{' '}
+              <strong>{formatKg(settings.targetKg)}</strong> per person.
+            </>
+          )}
+        </p>
+        <p className="text-muted-foreground">
+          Du ser kanskje også tallene 8 og 13 tonn. 8 tonn er Norges utslipp innenfor landets grenser
+          delt på antall innbyggere, inkludert olje- og gassproduksjon for eksport. 13 tonn er alt
+          forbruk i Norge inkludert offentlig sektor og investeringer. Ingen av dem måler det én
+          person selv kan påvirke, så vi bruker livsstilsfotavtrykket.
         </p>
         <p className="text-muted-foreground">
           Tallene er avrundede gjennomsnitt og gir et omtrentlig bilde, ikke et nøyaktig

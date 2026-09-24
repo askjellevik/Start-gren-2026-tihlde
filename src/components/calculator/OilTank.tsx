@@ -10,12 +10,14 @@ interface OilTankProps {
   /** null = ikke regnet ut ennå. Tanken oppdateres kun ved "Regn ut". */
   result: TankResult | null
   averageKg: number
+  /** Valgfritt klimamål, vises som egen strek. */
+  targetKg?: number | null
 }
 
 // Geometri (SVG-enheter)
-const W = 200
+const W = 240
 const H = 440
-const TUBE_X = 50
+const TUBE_X = 70
 const TUBE_W = 100
 const TOP = 30
 const BOTTOM = 420
@@ -28,11 +30,12 @@ export const FILL_DURATION = 1.8
 
 // Søyle formet som et oljerør. Streken er snittet for en nordmann; oljen er
 // ditt fotavtrykk. Mer enn snittet → over streken, mer enn tanken → renner over.
-export function OilTank({ result, averageKg }: OilTankProps) {
+export function OilTank({ result, averageKg, targetKg }: OilTankProps) {
   const reduceMotion = useReducedMotion()
   const maxKg = averageKg * CAPACITY
   const levelY = (kg: number) => BOTTOM - Math.min(kg / maxKg, 1) * INNER_H
   const averageY = levelY(averageKg)
+  const targetY = targetKg ? levelY(targetKg) : null
 
   const total = result?.totalKg ?? 0
   const baseline = result?.baselineKg ?? 0
@@ -53,7 +56,8 @@ export function OilTank({ result, averageKg }: OilTankProps) {
     ? `Ditt fotavtrykk er ${formatKg(total)} per år. Snittet er ${formatKg(averageKg)}. ` +
       (overAverage
         ? `Du ligger ${formatKg(diff)} over snittet.`
-        : `Du ligger ${formatKg(-diff)} under snittet.`)
+        : `Du ligger ${formatKg(-diff)} under snittet.`) +
+      (targetKg ? ` Klimamålet er ${formatKg(targetKg)}.` : '')
     : 'Tanken fylles når du trykker «Regn ut min bærekraftsscore».'
 
   return (
@@ -131,6 +135,27 @@ export function OilTank({ result, averageKg }: OilTankProps) {
         />
         <line x1={TUBE_X - 8} x2={TUBE_X + TUBE_W + 8} y1={TOP} y2={TOP} stroke="var(--primary)" strokeWidth={5} strokeLinecap="round" />
 
+        {/* Klimamålet */}
+        {targetY !== null && targetKg && (
+          <g>
+            <line
+              x1={TUBE_X - 14}
+              x2={TUBE_X + TUBE_W + 14}
+              y1={targetY}
+              y2={targetY}
+              stroke="var(--accent)"
+              strokeWidth={3}
+              strokeDasharray="3 4"
+            />
+            <text x={TUBE_X - 18} y={targetY - 4} fontSize={12} fontWeight={700} fill="var(--accent)" textAnchor="end">
+              Mål
+            </text>
+            <text x={TUBE_X - 18} y={targetY + 11} fontSize={11} fill="var(--accent)" textAnchor="end">
+              {formatKg(targetKg)}
+            </text>
+          </g>
+        )}
+
         {/* Snittstreken */}
         <line
           x1={TUBE_X - 14}
@@ -202,7 +227,7 @@ export function OilTank({ result, averageKg }: OilTankProps) {
             {overflowing && <span className="block text-danger">Tanken renner over!</span>}
             <span className="mt-2 flex items-center justify-center gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
-                <span aria-hidden className="size-2.5 rounded-sm bg-oil-shared" /> Felles
+                <span aria-hidden className="size-2.5 rounded-sm bg-oil-shared" /> Faste tjenester
               </span>
               <span className="flex items-center gap-1">
                 <span aria-hidden className="size-2.5 rounded-sm bg-oil" /> Dine valg
