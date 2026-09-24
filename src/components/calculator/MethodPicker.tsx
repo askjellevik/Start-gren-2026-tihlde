@@ -1,4 +1,5 @@
 import { Check, ChevronDown, ChevronRight } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useRef, useState, type MouseEvent } from 'react'
 import { annualKg, formatKg, PERIOD_LABEL } from '@/lib/calculator/engine'
 import { cn } from '@/lib/utils'
@@ -24,6 +25,7 @@ export function MethodPicker({
   onAnswer,
 }: MethodPickerProps) {
   const [menuOpen, setMenuOpen] = useState(true)
+  const reduceMotion = useReducedMotion()
   const questionRef = useRef<HTMLDivElement>(null)
 
   // På mobil ligger spørsmålet under menyen, så vi scroller dit ved valg.
@@ -51,32 +53,33 @@ export function MethodPicker({
   const [lastActiveId, setLastActiveId] = useState(activeMethodId)
   if (activeMethodId !== lastActiveId) {
     setLastActiveId(activeMethodId)
+    // Hopper man til en ny kategori, lukkes de andre så menyen holder seg kort.
     if (activeMethod && !openCategories.has(activeMethod.categoryId)) {
-      setOpenCategories((prev) => new Set(prev).add(activeMethod.categoryId))
+      setOpenCategories(new Set([activeMethod.categoryId]))
     }
   }
 
   const activeCategory = data.categories.find((c) => c.id === activeMethod?.categoryId)
 
   return (
-    <div className="grid gap-4 md:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]">
+    <div className="grid gap-4 md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
       {/* Venstre: nedtrekksmenyer */}
-      <nav aria-label="Utslippsmetoder" className="self-start rounded-lg border bg-card">
+      <nav
+        aria-label="Utslippsmetoder"
+        className="self-start overflow-hidden rounded-xl bg-muted/60 ring-1 ring-border/70"
+      >
         <button
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
-          className={cn(
-            'flex w-full items-center justify-between rounded-t-lg bg-primary px-4 py-3 text-left font-bold text-primary-foreground',
-            !menuOpen && 'rounded-b-lg',
-          )}
+          className="flex w-full items-center justify-between bg-gradient-to-r from-primary to-[#3a6538] px-4 py-3 text-left font-bold text-primary-foreground"
         >
           Utslippsmetoder
-          <ChevronDown className={cn('size-5 transition-transform', menuOpen && 'rotate-180')} />
+          <ChevronDown className={cn('size-5 transition-transform duration-300', menuOpen && 'rotate-180')} />
         </button>
 
         {menuOpen && (
-          <ul className="divide-y">
+          <ul className="space-y-1 p-2">
             {data.categories.map((category) => {
               const methods = data.methods.filter((m) => m.categoryId === category.id)
               const answered = methods.filter((m) => answers[m.id] !== undefined).length
@@ -87,39 +90,64 @@ export function MethodPicker({
                     type="button"
                     onClick={() => toggleCategory(category.id)}
                     aria-expanded={open}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-muted"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-card"
                   >
                     <span
                       aria-hidden
-                      className="size-3 shrink-0 rounded-full"
-                      style={{ backgroundColor: category.color }}
-                    />
-                    <span className="flex-1 font-bold">{category.name}</span>
-                    <span className="text-xs text-muted-foreground">
+                      className="grid size-7 shrink-0 place-items-center rounded-lg"
+                      style={{ backgroundColor: `color-mix(in oklch, ${category.color}, white 80%)` }}
+                    >
+                      <span className="size-2.5 rounded-full" style={{ backgroundColor: category.color }} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-sm leading-tight font-bold">{category.name}</span>
+                      <span aria-hidden className="mt-1 block h-1 overflow-hidden rounded-full bg-border/70">
+                        <span
+                          className="block h-full rounded-full transition-all duration-500"
+                          style={{
+                            width: `${(answered / Math.max(1, methods.length)) * 100}%`,
+                            backgroundColor: category.color,
+                          }}
+                        />
+                      </span>
+                    </span>
+                    <span className="text-xs text-muted-foreground tabular-nums">
                       {answered}/{methods.length}
                     </span>
-                    <ChevronRight className={cn('size-4 transition-transform', open && 'rotate-90')} />
+                    <ChevronRight
+                      className={cn('size-4 text-muted-foreground transition-transform', open && 'rotate-90')}
+                    />
                   </button>
 
                   {open && (
-                    <ul className="pb-2">
+                    <ul className="mt-1 mb-2 space-y-0.5 pl-6">
                       {methods.map((method) => {
                         const isActive = method.id === activeMethodId
                         const isAnswered = answers[method.id] !== undefined
                         return (
-                          <li key={method.id}>
+                          <li key={method.id} className="relative">
+                            {isActive && (
+                              <motion.span
+                                layoutId="active-method"
+                                aria-hidden
+                                className="absolute inset-0 rounded-lg bg-card shadow-soft ring-1 ring-border/70"
+                                transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                              />
+                            )}
                             <button
                               type="button"
                               onClick={() => selectMethod(method.id)}
                               aria-current={isActive ? 'true' : undefined}
                               className={cn(
-                                'flex w-full items-center gap-2 py-2 pr-4 pl-10 text-left text-sm hover:bg-muted',
-                                isActive && 'bg-secondary font-bold text-secondary-foreground',
+                                'relative flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors',
+                                isActive ? 'font-bold text-primary' : 'text-foreground/80 hover:text-foreground',
                               )}
                             >
                               <span className="flex-1">{method.name}</span>
                               {isAnswered && (
-                                <Check aria-label="Besvart" className="size-4 text-accent" />
+                                <span className="grid size-4.5 place-items-center rounded-full bg-accent/15">
+                                  <Check aria-label="Besvart" className="size-3 text-accent" strokeWidth={3} />
+                                </span>
                               )}
                             </button>
                           </li>
@@ -135,60 +163,91 @@ export function MethodPicker({
       </nav>
 
       {/* Høyre: valg */}
-      <div ref={questionRef} className="scroll-mt-4 rounded-lg border bg-card p-5 md:p-6">
-        {activeMethod ? (
-          <fieldset>
-            <legend className="mb-1 text-sm font-bold tracking-wide text-muted-foreground uppercase">
-              {activeCategory?.name} · {PERIOD_LABEL[activeMethod.period]}
-            </legend>
-            <p id="method-question" className="mb-5 text-xl font-bold text-primary">
-              {activeMethod.question}
-            </p>
-            <div role="radiogroup" aria-labelledby="method-question" className="grid gap-2 sm:grid-cols-2">
-              {activeMethod.choices.map((choice, index) => {
-                const selected = answers[activeMethod.id] === index
-                const kg = annualKg(activeMethod, index)
-                return (
-                  <button
-                    key={`${choice.label}-${index}`}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={(e) => onAnswer(activeMethod.id, index, e)}
-                    className={cn(
-                      'flex items-center justify-between gap-3 rounded-lg border-2 px-4 py-3 text-left transition-colors',
-                      selected
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border hover:border-accent hover:bg-muted',
-                    )}
-                  >
-                    <span className="font-bold">{choice.label}</span>
-                    <span
+      <div
+        ref={questionRef}
+        className="relative scroll-mt-4 self-start overflow-clip rounded-xl md:sticky md:top-6 bg-gradient-to-br from-card via-card to-secondary/70 p-5 ring-1 ring-border/70 md:p-7"
+      >
+        {activeCategory && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full opacity-20 blur-3xl transition-colors duration-500"
+            style={{ backgroundColor: activeCategory.color }}
+          />
+        )}
+        <AnimatePresence mode="wait" initial={false}>
+          {activeMethod ? (
+            <motion.fieldset
+              key={activeMethod.id}
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+              transition={{ duration: 0.16 }}
+              className="relative"
+            >
+              <legend className="mb-2 flex items-center gap-2 text-xs font-bold tracking-wider text-muted-foreground uppercase">
+                <span aria-hidden className="size-2 rounded-full" style={{ backgroundColor: activeCategory?.color }} />
+                {activeCategory?.name} · {PERIOD_LABEL[activeMethod.period]}
+              </legend>
+              <p
+                id="method-question"
+                className="mb-6 text-xl leading-snug font-black tracking-tight text-primary sm:text-2xl"
+              >
+                {activeMethod.question}
+              </p>
+              <div role="radiogroup" aria-labelledby="method-question" className="grid gap-2.5 sm:grid-cols-2">
+                {activeMethod.choices.map((choice, index) => {
+                  const selected = answers[activeMethod.id] === index
+                  const kg = annualKg(activeMethod, index)
+                  return (
+                    <button
+                      key={`${choice.label}-${index}`}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={(e) => onAnswer(activeMethod.id, index, e)}
                       className={cn(
-                        'shrink-0 text-xs',
-                        selected ? 'text-primary-foreground/80' : 'text-muted-foreground',
+                        'relative flex items-center justify-between gap-3 rounded-xl border bg-card px-4 py-3.5 text-left transition-all duration-200',
+                        selected
+                          ? 'border-transparent text-primary-foreground shadow-lift'
+                          : 'border-border hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-soft',
                       )}
                     >
-                      {kg > 0 ? `${formatKg(kg)}/år` : 'ingen utslipp'}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-            {activeMethod.sourceName && (
-              <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-                <span
-                  aria-hidden
-                  className="size-2.5 rounded-full"
-                  style={{ background: colors.get(activeMethod.id) }}
-                />
-                Kilde: {activeMethod.sourceName}
-              </p>
-            )}
-          </fieldset>
-        ) : (
-          <p className="text-muted-foreground">Velg en utslippsmetode i menyen for å starte.</p>
-        )}
+                      {selected && (
+                        <motion.span
+                          layoutId={`choice-${activeMethod.id}`}
+                          aria-hidden
+                          className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-[#3a6538]"
+                          transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                        />
+                      )}
+                      <span className="relative font-bold">{choice.label}</span>
+                      <span
+                        className={cn(
+                          'relative shrink-0 rounded-full px-2 py-0.5 text-xs tabular-nums',
+                          selected ? 'bg-white/15 text-primary-foreground' : 'bg-muted text-muted-foreground',
+                        )}
+                      >
+                        {kg > 0 ? `${formatKg(kg)}/år` : 'ingen utslipp'}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+              {activeMethod.sourceName && (
+                <p className="mt-5 flex items-start gap-2 text-xs text-muted-foreground">
+                  <span
+                    aria-hidden
+                    className="mt-1 size-2 shrink-0 rounded-full"
+                    style={{ background: colors.get(activeMethod.id) }}
+                  />
+                  Kilde: {activeMethod.sourceName}
+                </p>
+              )}
+            </motion.fieldset>
+          ) : (
+            <p className="text-muted-foreground">Velg en utslippsmetode i menyen for å starte.</p>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

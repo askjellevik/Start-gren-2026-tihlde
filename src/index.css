@@ -182,3 +182,51 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =====================================================================
+   MODERNE FLATER – myke skygger, bakgrunnsgradient og glans
+   ===================================================================== */
+@utility shadow-soft {
+  box-shadow:
+    0 1px 2px rgb(42 78 42 / 0.05),
+    0 6px 16px -4px rgb(42 78 42 / 0.08),
+    0 24px 48px -24px rgb(42 78 42 / 0.18);
+}
+
+@utility shadow-lift {
+  box-shadow:
+    0 2px 4px rgb(42 78 42 / 0.08),
+    0 12px 28px -6px rgb(42 78 42 / 0.2);
+}
+
+@layer base {
+  body {
+    background:
+      radial-gradient(60rem 30rem at 100% 0%, rgb(114 143 63 / 0.10), transparent 60%),
+      radial-gradient(50rem 30rem at 0% 30%, rgb(247 242 239 / 0.9), transparent 70%),
+      var(--background);
+    background-attachment: fixed;
+  }
+}
+
+@keyframes shine {
+  from { transform: translateX(-150%) skewX(-20deg); }
+  to { transform: translateX(350%) skewX(-20deg); }
+}
+
+/* Lysstripe som glir over knappen */
+@utility btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 35%;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.28), transparent);
+    transform: translateX(-150%) skewX(-20deg);
+    animation: shine 4s ease-in-out 1s infinite;
+    pointer-events: none;
+  }
+}

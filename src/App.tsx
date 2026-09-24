@@ -1,3 +1,4 @@
+import { BookOpen, Clock, ShieldCheck } from 'lucide-react'
 import { lazy, Suspense } from 'react'
 import { Calculator } from '@/components/calculator/Calculator'
 
@@ -11,17 +12,21 @@ const isAdminRoute = window.location.pathname.replace(/\/+$/, '') === '/admin'
 
 function App() {
   return (
-    <div className="flex min-h-svh flex-col bg-background text-foreground">
-      <header className="bg-primary text-primary-foreground">
+    <div className="flex min-h-svh flex-col text-foreground">
+      <header className="relative isolate overflow-clip bg-primary text-primary-foreground">
+        {/* Myke lysflekker i bakgrunnen */}
+        <div aria-hidden className="absolute inset-0 -z-10">
+          <div className="absolute -top-32 -right-24 size-[28rem] rounded-full bg-accent/40 blur-3xl" />
+          <div className="absolute -bottom-40 -left-20 size-[24rem] rounded-full bg-[#1b3a1b] blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.07)_1px,transparent_0)] [background-size:22px_22px]" />
+        </div>
+
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <a href="/" className="flex items-center gap-3">
-            <span aria-hidden className="grid size-9 place-items-center rounded-full bg-accent text-lg font-black">
+            <span aria-hidden className="grid size-9 place-items-center rounded-xl bg-white/15 text-lg font-black ring-1 ring-white/25 backdrop-blur">
               C
             </span>
-            <span className="leading-tight">
-              <span className="block text-lg font-black">Bærekraftskalkulator</span>
-              <span className="block text-xs opacity-80">Hvor stort er ditt klimafotavtrykk?</span>
-            </span>
+            <span className="text-sm font-bold tracking-wide">Bærekraftskalkulator</span>
           </a>
           {isAdminRoute && (
             <a href="/" className="text-sm underline underline-offset-4">
@@ -29,9 +34,42 @@ function App() {
             </a>
           )}
         </div>
+
+        {!isAdminRoute && (
+          <div className="mx-auto max-w-6xl px-4 pt-6 pb-20 sm:px-6 sm:pt-10 sm:pb-24">
+            <h1 className="max-w-2xl text-4xl leading-[1.05] font-black tracking-tight text-balance sm:text-5xl">
+              Hvor stort er klimafotavtrykket ditt?
+            </h1>
+            <p className="mt-4 max-w-xl text-base text-primary-foreground/80 sm:text-lg">
+              Svar på noen spørsmål om hverdagen din og se hvordan du ligger an mot en gjennomsnittlig
+              nordmann – og hva som faktisk monner.
+            </p>
+            <ul className="mt-6 flex flex-wrap gap-2 text-sm">
+              {[
+                { icon: Clock, text: 'Tar et par minutter' },
+                { icon: ShieldCheck, text: 'Ingen svar lagres' },
+                { icon: BookOpen, text: 'Tall fra åpne kilder' },
+              ].map(({ icon: Icon, text }) => (
+                <li
+                  key={text}
+                  className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 ring-1 ring-white/20 backdrop-blur"
+                >
+                  <Icon aria-hidden className="size-4" />
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+      <main
+        className={
+          isAdminRoute
+            ? 'mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6'
+            : 'relative mx-auto -mt-12 w-full max-w-6xl flex-1 px-4 pb-12 sm:px-6'
+        }
+      >
         {isAdminRoute ? (
           <Suspense fallback={<p className="text-muted-foreground">Laster adminpanel …</p>}>
             <AdminPanel />
@@ -41,8 +79,8 @@ function App() {
         )}
       </main>
 
-      <footer className="border-t bg-secondary">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:px-6">
+      <footer className="border-t border-border/70 bg-secondary/60">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:px-6">
           <span>Ingen svar lagres. Alt regnes ut i nettleseren din.</span>
           {!isAdminRoute && (
             <a href="/admin" className="opacity-60 hover:underline hover:opacity-100">
