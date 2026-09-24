@@ -16,6 +16,9 @@ export interface MethodDraft {
   sourceName: string
   sourceUrl: string
   sortOrder: string
+  easyWinText: string
+  easyWinUnits: string
+  easyWinReplacementId: string
 }
 
 export interface CategoryDraft {
@@ -97,6 +100,20 @@ export function validateMethod(d: MethodDraft): { errors: Errors<MethodDraft>; c
   if (d.sourceName.length > 300) errors.sourceName = 'Maks 300 tegn'
   errors.sourceUrl = checkUrl(d.sourceUrl)
   if (parseNumber(d.sortOrder) === null) errors.sortOrder = 'Oppgi et heltall'
+
+  // Enkelt grep: tekst og antall må fylles ut sammen.
+  const hasText = d.easyWinText.trim() !== ''
+  const hasUnits = d.easyWinUnits.trim() !== ''
+  if (hasText !== hasUnits) {
+    errors.easyWinUnits = 'Fyll ut både tekst og antall, eller la begge stå tomme'
+  } else if (hasText) {
+    const units = parseNumber(d.easyWinUnits)
+    if (units === null || units <= 0 || units > 1000000) errors.easyWinUnits = 'Oppgi et tall over 0'
+    if (d.easyWinText.trim().length > 200) errors.easyWinText = 'Maks 200 tegn'
+  }
+  if (d.easyWinReplacementId && d.easyWinReplacementId === d.id) {
+    errors.easyWinReplacementId = 'En metode kan ikke erstatte seg selv'
+  }
 
   return { errors: stripEmpty(errors), choices }
 }

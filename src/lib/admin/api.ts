@@ -48,6 +48,9 @@ export interface MethodInput {
   sourceName: string | null
   sourceUrl: string | null
   sortOrder: number
+  easyWinText: string | null
+  easyWinUnits: number | null
+  easyWinReplacementId: string | null
 }
 
 function methodRow(m: MethodInput) {
@@ -63,6 +66,9 @@ function methodRow(m: MethodInput) {
     source_name: m.sourceName,
     source_url: m.sourceUrl,
     sort_order: m.sortOrder,
+    easy_win_text: m.easyWinText,
+    easy_win_units: m.easyWinUnits,
+    easy_win_replacement_id: m.easyWinReplacementId,
   }
 }
 

@@ -4,8 +4,10 @@ import { useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/button'
 import { useCalculatorData } from '@/hooks/useCalculatorData'
 import { buildMethodColors } from '@/lib/calculator/colors'
+import { findEasyWin, type EasyWin } from '@/lib/calculator/easyWin'
 import { computeFootprint, type Footprint } from '@/lib/calculator/engine'
 import type { Answers } from '@/types/calculator'
+import { AverageNote } from './AverageNote'
 import { DonutChart } from './DonutChart'
 import { FlyingChips, type FlyingChip } from './FlyingChips'
 import { MethodPicker } from './MethodPicker'
@@ -23,7 +25,7 @@ export function Calculator() {
   const [highlightId, setHighlightId] = useState<string | null>(null)
   const [chips, setChips] = useState<FlyingChip[]>([])
   // Tanken og scoren bruker et øyeblikksbilde fra sist man trykket "Regn ut".
-  const [snapshot, setSnapshot] = useState<Footprint | null>(null)
+  const [snapshot, setSnapshot] = useState<{ footprint: Footprint; easyWin: EasyWin | null } | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const dialogTimer = useRef<number | undefined>(undefined)
   const donutRef = useRef<HTMLDivElement>(null)
@@ -40,7 +42,7 @@ export function Calculator() {
   const activeId = activeMethodId && data.methods.some((m) => m.id === activeMethodId)
     ? activeMethodId
     : (orderedMethods[0]?.id ?? null)
-  const snapshotStale = snapshot !== null && snapshot.totalKg !== footprint.totalKg
+  const snapshotStale = snapshot !== null && snapshot.footprint.totalKg !== footprint.totalKg
 
   function handleAnswer(methodId: string, choiceIndex: number, event: MouseEvent<HTMLButtonElement>) {
     const method = data.methods.find((m) => m.id === methodId)
@@ -77,7 +79,7 @@ export function Calculator() {
   }
 
   function handleCalculate() {
-    setSnapshot(footprint)
+    setSnapshot({ footprint, easyWin: findEasyWin(data, answers) })
     tankRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' })
     // Popupen kommer når oljen har steget ferdig.
     window.clearTimeout(dialogTimer.current)
@@ -173,10 +175,13 @@ export function Calculator() {
             </p>
           )}
           <OilTank
-            result={snapshot ? { totalKg: snapshot.totalKg, baselineKg: snapshot.baselineKg } : null}
+            result={
+              snapshot ? { totalKg: snapshot.footprint.totalKg, baselineKg: snapshot.footprint.baselineKg } : null
+            }
             averageKg={data.settings.nationalAverageKg}
             targetKg={data.settings.targetKg}
           />
+          <AverageNote settings={data.settings} className="mt-4" />
         </section>
       </div>
 
@@ -186,8 +191,9 @@ export function Calculator() {
         <ScoreDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
-          footprint={snapshot}
-          averageKg={data.settings.nationalAverageKg}
+          footprint={snapshot.footprint}
+          settings={data.settings}
+          easyWin={snapshot.easyWin}
         />
       )}
       <FlyingChips chips={chips} onDone={(key) => setChips((c) => c.filter((x) => x.key !== key))} />

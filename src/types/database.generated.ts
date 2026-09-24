@@ -117,6 +117,9 @@ export type Database = {
           category_id: string
           choices: Json
           created_at: string
+          easy_win_replacement_id: string | null
+          easy_win_text: string | null
+          easy_win_units: number | null
           id: string
           kg_co2e_per_unit: number
           name: string
@@ -133,6 +136,9 @@ export type Database = {
           category_id: string
           choices: Json
           created_at?: string
+          easy_win_replacement_id?: string | null
+          easy_win_text?: string | null
+          easy_win_units?: number | null
           id?: string
           kg_co2e_per_unit: number
           name: string
@@ -149,6 +155,9 @@ export type Database = {
           category_id?: string
           choices?: Json
           created_at?: string
+          easy_win_replacement_id?: string | null
+          easy_win_text?: string | null
+          easy_win_units?: number | null
           id?: string
           kg_co2e_per_unit?: number
           name?: string
@@ -167,6 +176,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emission_methods_easy_win_replacement_id_fkey"
+            columns: ["easy_win_replacement_id"]
+            isOneToOne: false
+            referencedRelation: "emission_methods"
             referencedColumns: ["id"]
           },
         ]

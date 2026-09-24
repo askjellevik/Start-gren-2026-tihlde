@@ -13,6 +13,9 @@ const validMethod: MethodDraft = {
   sourceName: '',
   sourceUrl: '',
   sortOrder: '1',
+  easyWinText: '',
+  easyWinUnits: '',
+  easyWinReplacementId: '',
 }
 
 describe('parseNumber', () => {
@@ -46,6 +49,18 @@ describe('validateMethod', () => {
     expect(validateMethod({ ...validMethod, sourceUrl: 'javascript:alert(1)' }).errors.sourceUrl).toBeDefined()
     expect(validateMethod({ ...validMethod, sourceUrl: 'http://ssb.no' }).errors.sourceUrl).toBeDefined()
     expect(validateMethod({ ...validMethod, sourceUrl: 'https://ssb.no' }).errors.sourceUrl).toBeUndefined()
+  })
+})
+
+describe('enkelt grep', () => {
+  it('krever både tekst og antall', () => {
+    expect(validateMethod({ ...validMethod, easyWinText: 'spiser mindre ost' }).errors.easyWinUnits).toBeDefined()
+    expect(validateMethod({ ...validMethod, easyWinText: 'spiser mindre ost', easyWinUnits: '2' }).errors).toEqual({})
+  })
+  it('avviser at en metode erstatter seg selv', () => {
+    expect(
+      validateMethod({ ...validMethod, id: 'ost', easyWinReplacementId: 'ost' }).errors.easyWinReplacementId,
+    ).toBeDefined()
   })
 })
 

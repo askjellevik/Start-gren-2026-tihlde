@@ -68,6 +68,8 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Bytt én rødt kjøtt-middag i uka med kylling, fisk eller bønner – det sparer rundt 250 kg i året.',
       sourceName: 'Poore & Nemecek (2018) via Our World in Data: storfe 33,3 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 1,
+      easyWinText: 'bytter ut én middag med rødt kjøtt i uka med en vegetarmiddag',
+      easyWinUnits: 1, easyWinReplacementId: 'vegetar',
     },
     {
       // Snitt av svin 12,3 og kylling 9,9 kg/kg × 0,15 kg.
@@ -80,6 +82,8 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'Poore & Nemecek (2018) via Our World in Data: svin 12,3 og kylling 9,9 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 2,
+      easyWinText: 'bytter ut én kylling- eller svinemiddag i uka med en vegetarmiddag',
+      easyWinUnits: 1, easyWinReplacementId: 'vegetar',
     },
     {
       // Oppdrettsfisk 13,6 kg/kg × 0,15 kg (globalt snitt; norsk laks ligger lavere).
@@ -92,6 +96,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'Poore & Nemecek (2018) via Our World in Data: oppdrettsfisk 13,6 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 3,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       // Tofu 3,2 kg/kg × 0,15 kg + ca. 0,2 kg grønnsaker à 0,5 kg/kg.
@@ -104,6 +109,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'Poore & Nemecek (2018) via Our World in Data: tofu 3,2 og grønnsaker ca. 0,5 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 4,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       // Glass melk 0,25 kg × 3,15 = 0,79; 30 g ost × 23,9 = 0,72.
@@ -116,6 +122,8 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Havre- og soyadrikk har rundt en tredjedel av utslippene til kumelk.',
       sourceName: 'Poore & Nemecek (2018) via Our World in Data: melk 3,15 og ost 23,9 kg CO2e per kg', sourceUrl: OWID_FOOD, sortOrder: 5,
+      easyWinText: 'dropper én porsjon melk, ost eller yoghurt om dagen',
+      easyWinUnits: 7, easyWinReplacementId: null,
     },
     {
       // Faktor 1: verdien er kg CO2e per år. Nordmenns kosthold totalt er 2,1 t
@@ -131,6 +139,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'Hot or Cool Institute (2025): nordmenns kosthold 2,1 t CO2e per år, fratrukket middager og meieri', sourceUrl: HOC_2025, sortOrder: 6,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
 
     // --- Transport ---------------------------------------------------------
@@ -145,6 +154,8 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Samkjøring, kollektiv eller elbil på jobbreisen kutter mye.',
       sourceName: 'ICCT (2025): bensinbil 235 g CO2e per km, hele livsløpet', sourceUrl: ICCT_2025, sortOrder: 1,
+      easyWinText: 'tar én kjøretur mindre til jobb i uka (ca. 30 km tur/retur) og sykler, går eller jobber hjemmefra i stedet',
+      easyWinUnits: 30, easyWinReplacementId: 'sykkel-gange',
     },
     {
       // ICCT 2025: elbil på fornybar strøm 52 g CO2e/km (norsk strøm er ~95 % fornybar).
@@ -157,6 +168,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'ICCT (2025): elbil på fornybar strøm 52 g CO2e per km, hele livsløpet', sourceUrl: ICCT_2025, sortOrder: 2,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       id: 'buss', categoryId: 'transport', name: 'Buss',
@@ -168,6 +180,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'SSB: buss 59 g CO2 per passasjerkm (2019)', sourceUrl: SSB_TRANSPORT, sortOrder: 3,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       id: 'tog', categoryId: 'transport', name: 'Tog, T-bane og trikk',
@@ -179,6 +192,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'SSB: jernbane 5,8 g CO2 per passasjerkm (2019)', sourceUrl: SSB_TRANSPORT, sortOrder: 4,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       id: 'sykkel-gange', categoryId: 'transport', name: 'Sykkel og gange',
@@ -190,6 +204,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'Regnes som utslippsfritt', sourceUrl: null, sortOrder: 5,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       // 181 g per passasjerkm × ca. 1000 km tur/retur (f.eks. Oslo–Trondheim).
@@ -202,6 +217,8 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Tog mellom de største byene har en brøkdel av utslippene til fly.',
       sourceName: 'SSB: innenlands luftfart 181 g CO2 per passasjerkm (2019), ca. 1000 km tur/retur', sourceUrl: SSB_TRANSPORT, sortOrder: 6,
+      easyWinText: 'tar toget i stedet for fly på én innenlandsreise i året',
+      easyWinUnits: 1, easyWinReplacementId: null,
     },
     {
       // 0,151 kg per passasjerkm × ca. 3000 km tur/retur (f.eks. Oslo–Berlin/Roma).
@@ -214,6 +231,7 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Én Europa-tur mindre i året sparer nesten et halvt tonn.',
       sourceName: 'DEFRA 2024: kortdistanse 0,151 kg CO2e per passasjerkm, ca. 3000 km tur/retur', sourceUrl: DEFRA, sortOrder: 7,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       // 0,117 kg per passasjerkm × ca. 15 000 km tur/retur (f.eks. Oslo–New York/Bangkok).
@@ -226,6 +244,7 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Én langdistansereise gir mer utslipp enn et helt års middager.',
       sourceName: 'DEFRA 2024: langdistanse 0,117 kg CO2e per passasjerkm, ca. 15 000 km tur/retur', sourceUrl: DEFRA, sortOrder: 8,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
 
     // --- Bolig og energi (per år) -----------------------------------------
@@ -242,6 +261,7 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Å dele bolig med flere er et av de mest effektive klimatiltakene – utslippene fordeles.',
       sourceName: 'Hot or Cool Institute (2025): boligareal 0,6 t per nordmann; NVE: strøm 11,9 g CO2e/kWh', sourceUrl: HOC_2025, sortOrder: 1,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       // Faktor 1: verdien er kg CO2e per år i tillegg til strøm, ved ca. 5000 kWh
@@ -257,6 +277,7 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Bytt ut gassfyring med varmepumpe – Enova gir støtte.',
       sourceName: 'Hafslund: fjernvarme 20,8 g CO2e/kWh (2025); DEFRA: propan ca. 0,23 kg/kWh; ca. 5000 kWh varme per person', sourceUrl: HAFSLUND, sortOrder: 2,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
 
     // --- Forbruk og fritid -------------------------------------------------
@@ -270,6 +291,8 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Bruktkjøp og reparasjon gir nesten null ekstra utslipp.',
       sourceName: 'CONCITO: t-skjorte ca. 7, jeans 11–20 kg CO2e per plagg', sourceUrl: CONCITO_KLAER, sortOrder: 1,
+      easyWinText: 'kjøper ett nytt klesplagg mindre i måneden',
+      easyWinUnits: 1, easyWinReplacementId: null,
     },
     {
       id: 'mobil', categoryId: 'forbruk', name: 'Ny mobil eller nettbrett',
@@ -281,6 +304,8 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Å bruke mobilen ett år ekstra er et av de enkleste kuttene.',
       sourceName: 'Apple Product Environmental Report: iPhone 16 (128 GB) 56 kg CO2e', sourceUrl: APPLE_IPHONE, sortOrder: 2,
+      easyWinText: 'bruker mobilen ett år lenger før du bytter',
+      easyWinUnits: 0.5, easyWinReplacementId: null,
     },
     {
       id: 'pc', categoryId: 'forbruk', name: 'Ny PC',
@@ -292,6 +317,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'Apple Product Environmental Report: MacBook Air M3 158 kg CO2e', sourceUrl: APPLE_MACBOOK, sortOrder: 3,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
     {
       // Faktor 1: verdien er kg CO2e per år. Fritid (kultur, hobby, restaurant,
@@ -305,6 +331,7 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'Hot or Cool Institute (2025): fritid 1,0 t CO2e per nordmann per år', sourceUrl: HOC_2025, sortOrder: 4,
+      easyWinText: null, easyWinUnits: null, easyWinReplacementId: null,
     },
 
     // --- Avfall ------------------------------------------------------------
@@ -319,6 +346,8 @@ export const seedData: CalculatorData = {
       ],
       tip: null,
       sourceName: 'Hafslund (Klemetsrud/Haraldrud 2025): 0,51 t fossil CO2 per tonn avfall; ca. 4 kg per pose', sourceUrl: HAFSLUND, sortOrder: 1,
+      easyWinText: 'sorterer ut nok matavfall og plast til én pose restavfall mindre i uka',
+      easyWinUnits: 1, easyWinReplacementId: null,
     },
     {
       // Faktor 1: verdien er ekstra kg CO2e per år. Nordmenn bruker ca. 18 kg
@@ -332,6 +361,8 @@ export const seedData: CalculatorData = {
       ],
       tip: 'Kildesortering er gratis og tar et par minutter om dagen.',
       sourceName: 'Grønt Punkt: ca. 18 kg plastemballasje per person i året; ca. 2,7 kg CO2 per kg plast som brennes', sourceUrl: GRONT_PUNKT, sortOrder: 2,
+      easyWinText: 'begynner å sortere plast, papir, glass og matavfall',
+      easyWinUnits: 50, easyWinReplacementId: null,
     },
   ],
 }

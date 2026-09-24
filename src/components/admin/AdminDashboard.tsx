@@ -109,6 +109,7 @@ export function AdminDashboard({ email, onSignOut }: AdminDashboardProps) {
         <MethodForm
           method={editing.method}
           categories={categories}
+          methods={methods}
           onCancel={() => setEditing(null)}
           onSaved={() => finishEditing(editing.method ? 'Utslippsmetoden er oppdatert.' : 'Utslippsmetoden er lagt til.')}
         />

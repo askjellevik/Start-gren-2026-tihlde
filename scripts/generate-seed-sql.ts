@@ -30,13 +30,14 @@ const lines: string[] = [
     .join(',\n'),
   'on conflict (id) do nothing;',
   '',
-  'insert into public.emission_methods (id, category_id, name, question, period, unit_label, kg_co2e_per_unit, choices, tip, source_name, source_url, sort_order) values',
+  'insert into public.emission_methods (id, category_id, name, question, period, unit_label, kg_co2e_per_unit, choices, tip, source_name, source_url, sort_order, easy_win_text, easy_win_units, easy_win_replacement_id) values',
   methods
     .map((m) => {
       const values = [
         sql(m.id), sql(m.categoryId), sql(m.name), sql(m.question), sql(m.period), sql(m.unitLabel),
         sql(m.kgCo2ePerUnit), `${sql(JSON.stringify(m.choices))}::jsonb`,
         sql(m.tip), sql(m.sourceName), sql(m.sourceUrl), sql(m.sortOrder),
+        sql(m.easyWinText), sql(m.easyWinUnits), sql(m.easyWinReplacementId),
       ]
       return `  (${values.join(', ')})`
     })

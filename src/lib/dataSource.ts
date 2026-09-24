@@ -54,6 +54,9 @@ export function toMethod(row: EmissionMethodRow): EmissionMethod {
     sourceName: row.source_name,
     sourceUrl: row.source_url,
     sortOrder: row.sort_order,
+    easyWinText: row.easy_win_text,
+    easyWinUnits: row.easy_win_units === null ? null : Number(row.easy_win_units),
+    easyWinReplacementId: row.easy_win_replacement_id,
   }
 }
 

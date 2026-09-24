@@ -32,6 +32,12 @@ export interface EmissionMethod {
   sourceName: string | null
   sourceUrl: string | null
   sortOrder: number
+  /** Enkelt grep, fortsetter setningen «Dersom du bare …», f.eks. «tar én kjøretur mindre til jobb i uka». */
+  easyWinText: string | null
+  /** Hvor mange enheter per periode grepet kutter, f.eks. 30 (km). */
+  easyWinUnits: number | null
+  /** Metoden man bytter til (samme enhet), f.eks. vegetar i stedet for rødt kjøtt. */
+  easyWinReplacementId: string | null
 }
 
 export interface CalculatorSettings {

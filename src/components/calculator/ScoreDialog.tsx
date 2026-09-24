@@ -1,20 +1,25 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { Dialog } from 'radix-ui'
-import { X } from 'lucide-react'
+import { Lightbulb, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import type { EasyWin } from '@/lib/calculator/easyWin'
 import { formatKg, type Footprint } from '@/lib/calculator/engine'
 import { isKlimaversting, scoreHeadline, sustainabilityScore } from '@/lib/calculator/score'
 import { cn } from '@/lib/utils'
+import type { CalculatorSettings } from '@/types/calculator'
+import { AverageNote } from './AverageNote'
 
 interface ScoreDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   footprint: Footprint
-  averageKg: number
+  settings: CalculatorSettings
+  easyWin: EasyWin | null
 }
 
 // Popup med bærekraftsscore 1–10 og de største utslippskildene med tips.
-export function ScoreDialog({ open, onOpenChange, footprint, averageKg }: ScoreDialogProps) {
+export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }: ScoreDialogProps) {
+  const averageKg = settings.nationalAverageKg
   const reduceMotion = useReducedMotion()
   const score = sustainabilityScore(footprint.totalKg, averageKg)
   const versting = isKlimaversting(score)
@@ -73,6 +78,17 @@ export function ScoreDialog({ open, onOpenChange, footprint, averageKg }: ScoreD
             nordmann ({formatKg(averageKg)}).
           </Dialog.Description>
 
+          {easyWin && (
+            <div className="mt-5 flex gap-3 rounded-lg border-2 border-accent bg-accent/10 p-4">
+              <Lightbulb aria-hidden className="mt-0.5 size-5 shrink-0 text-accent" />
+              <p>
+                <span className="block text-sm font-bold text-primary">Et enkelt grep</span>
+                Dersom du bare {easyWin.text}, sparer du{' '}
+                <strong className="text-primary">{formatKg(easyWin.savingKg)}</strong> i året.
+              </p>
+            </div>
+          )}
+
           {versting && (
             <p className="mt-4 rounded-lg bg-danger/10 p-3 text-sm text-danger">
               Du er i klimaverstingklassen – men det betyr bare at du har mye å spare. Se de største
@@ -105,6 +121,8 @@ export function ScoreDialog({ open, onOpenChange, footprint, averageKg }: ScoreD
               spørsmål teller som null utslipp.
             </p>
           )}
+
+          <AverageNote settings={settings} className="mt-4" />
 
           <Dialog.Close asChild>
             <Button className="mt-6 w-full" size="lg">

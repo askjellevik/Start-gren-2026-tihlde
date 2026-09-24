@@ -85,6 +85,12 @@ scripts/
    tjenester 0,5). Tanken viser også **1,5-gradersmålet for 2035: 1,1 tonn**.
 5. **Score** = 5,5 − 4,5 × log₂(total / snitt), avrundet og begrenset til 1–10.
    Halvparten av snittet gir 10, likt snittet gir 6, dobbelt så mye gir 1.
+6. **Et enkelt grep**: popupen viser det grepet som sparer brukeren mest, f.eks. «Dersom du bare
+   tar én kjøretur mindre til jobb i uka …, sparer du 367 kg i året». Hver metode kan ha en slik
+   tekst, et antall enheter og en erstatning (rødt kjøtt → vegetar). Utslippet fra erstatningen
+   trekkes fra, og man kan aldri kutte mer enn man gjør i dag (`src/lib/calculator/easyWin.ts`).
+
+Flyreiser regnes uten høydeeffekt (ikke-CO₂), slik SSB og DEFRA oppgir dem.
 
 **Hvorfor ikke 8 eller 13 tonn?** 8 tonn er Norges territorielle utslipp (44,6 mill. tonn i 2024,
 SSB) delt på innbyggere – inkludert olje- og gassproduksjon for eksport, men uten import.

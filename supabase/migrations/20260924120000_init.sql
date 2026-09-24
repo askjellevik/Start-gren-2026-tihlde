@@ -76,8 +76,15 @@ create table public.emission_methods (
   source_name      text check (length(source_name) <= 300),
   source_url       text check (source_url is null or (source_url ~ '^https://\S+$' and length(source_url) <= 500)),
   sort_order       integer not null default 0,
+  -- «Enkelt grep» i resultatet: «Dersom du bare <tekst>, sparer du X i året».
+  easy_win_text    text check (length(easy_win_text) between 1 and 200),
+  easy_win_units   numeric check (easy_win_units > 0 and easy_win_units <= 1000000),
+  -- Metoden man bytter til (samme enhet). Slettes den, faller erstatningen bort.
+  easy_win_replacement_id text references public.emission_methods (id) on delete set null,
   created_at       timestamptz not null default now(),
-  updated_at       timestamptz not null default now()
+  updated_at       timestamptz not null default now(),
+  check ((easy_win_text is null) = (easy_win_units is null)),
+  check (easy_win_replacement_id is null or easy_win_replacement_id <> id)
 );
 
 create index emission_methods_category_id_idx on public.emission_methods (category_id);

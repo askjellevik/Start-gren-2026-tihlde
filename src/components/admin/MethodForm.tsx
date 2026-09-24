@@ -4,12 +4,15 @@ import { Button } from '@/components/ui/button'
 import { Field, Input, Select, Textarea } from '@/components/ui/field'
 import { describeError, saveMethod } from '@/lib/admin/api'
 import { parseNumber, validateMethod, type Errors, type MethodDraft } from '@/lib/admin/validation'
+import { easyWinSaving } from '@/lib/calculator/easyWin'
 import { annualKg, formatKg, PERIOD_LABEL } from '@/lib/calculator/engine'
 import type { Category, EmissionMethod, Period } from '@/types/calculator'
 
 interface MethodFormProps {
   method: EmissionMethod | null
   categories: Category[]
+  /** Alle metoder, for å velge erstatning i «enkelt grep». */
+  methods: EmissionMethod[]
   onCancel: () => void
   onSaved: () => void
 }
@@ -30,10 +33,13 @@ function toDraft(method: EmissionMethod | null, categories: Category[]): MethodD
     sourceName: method?.sourceName ?? '',
     sourceUrl: method?.sourceUrl ?? '',
     sortOrder: String(method?.sortOrder ?? 0),
+    easyWinText: method?.easyWinText ?? '',
+    easyWinUnits: method?.easyWinUnits == null ? '' : String(method.easyWinUnits).replace('.', ','),
+    easyWinReplacementId: method?.easyWinReplacementId ?? '',
   }
 }
 
-export function MethodForm({ method, categories, onCancel, onSaved }: MethodFormProps) {
+export function MethodForm({ method, categories, methods, onCancel, onSaved }: MethodFormProps) {
   const [draft, setDraft] = useState(() => toDraft(method, categories))
   const [errors, setErrors] = useState<Errors<MethodDraft>>({})
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -65,6 +71,9 @@ export function MethodForm({ method, categories, onCancel, onSaved }: MethodForm
         sourceName: draft.sourceName.trim() || null,
         sourceUrl: draft.sourceUrl.trim() || null,
         sortOrder: Math.round(parseNumber(draft.sortOrder)!),
+        easyWinText: draft.easyWinText.trim() || null,
+        easyWinUnits: draft.easyWinText.trim() ? parseNumber(draft.easyWinUnits) : null,
+        easyWinReplacementId: draft.easyWinReplacementId || null,
       })
       onSaved()
     } catch (err) {
@@ -84,6 +93,18 @@ export function MethodForm({ method, categories, onCancel, onSaved }: MethodForm
     )
     return `${formatKg(kg)}/år`
   }
+
+  // Forhåndsvisning av det enkle grepet
+  const winUnits = parseNumber(draft.easyWinUnits)
+  const replacement = methods.find((m) => m.id === draft.easyWinReplacementId)
+  const winSaving =
+    winUnits !== null && winUnits > 0
+      ? easyWinSaving(
+          { ...(method ?? ({} as EmissionMethod)), period: draft.period, kgCo2ePerUnit: factor, easyWinUnits: winUnits },
+          winUnits,
+          replacement,
+        )
+      : 0
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 rounded-lg border bg-card p-6" noValidate>
@@ -165,6 +186,40 @@ export function MethodForm({ method, categories, onCancel, onSaved }: MethodForm
       <Field label="Tips (valgfritt)" htmlFor="m-tip" error={errors.tip} hint="Vises i resultatet hvis dette er en av de største kildene.">
         <Textarea id="m-tip" value={draft.tip} maxLength={300} onChange={(e) => set('tip', e.target.value)} />
       </Field>
+
+      <fieldset className="space-y-3 rounded-lg bg-muted p-4">
+        <legend className="px-1 text-sm font-bold">Enkelt grep (valgfritt)</legend>
+        <p className="text-xs text-muted-foreground">
+          Vises i resultatet som «Dersom du bare …, sparer du X i året» hvis dette er grepet som sparer
+          brukeren mest.
+        </p>
+        <Field label="Dersom du bare …" htmlFor="m-win-text" error={errors.easyWinText} hint="f.eks. «tar én kjøretur mindre til jobb i uka»">
+          <Input id="m-win-text" value={draft.easyWinText} maxLength={200} onChange={(e) => set('easyWinText', e.target.value)} />
+        </Field>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label={`Antall ${draft.unitLabel || 'enheter'} ${PERIOD_LABEL[draft.period]}`} htmlFor="m-win-units" error={errors.easyWinUnits}>
+            <Input id="m-win-units" inputMode="decimal" value={draft.easyWinUnits} onChange={(e) => set('easyWinUnits', e.target.value)} />
+          </Field>
+          <Field label="Erstattes med (samme enhet)" htmlFor="m-win-repl" error={errors.easyWinReplacementId} hint="Utslippet fra erstatningen trekkes fra besparelsen.">
+            <Select id="m-win-repl" value={draft.easyWinReplacementId} onChange={(e) => set('easyWinReplacementId', e.target.value)}>
+              <option value="">Ingenting</option>
+              {methods
+                .filter((m) => m.id !== draft.id)
+                .map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} ({m.kgCo2ePerUnit.toLocaleString('nb-NO')} kg per {m.unitLabel})
+                  </option>
+                ))}
+            </Select>
+          </Field>
+        </div>
+        {winSaving > 0 && (
+          <p className="text-sm">
+            Forhåndsvisning: «Dersom du bare {draft.easyWinText.trim() || '…'}, sparer du{' '}
+            <strong>{formatKg(winSaving)}</strong> i året.»
+          </p>
+        )}
+      </fieldset>
 
       <div className="grid gap-4 sm:grid-cols-[2fr_2fr_1fr]">
         <Field label="Kilde" htmlFor="m-source" error={errors.sourceName}>
