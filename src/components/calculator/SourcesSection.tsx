@@ -7,7 +7,7 @@ export function SourcesSection({ data }: { data: CalculatorData }) {
   const { settings } = data
   return (
     <details className="group rounded-lg border bg-card p-5">
-      <summary className="cursor-pointer font-bold text-primary">Kilder og metode</summary>
+      <summary className="cursor-pointer font-bold text-primary-ink">Kilder og metode</summary>
       <div className="mt-4 space-y-4 text-sm">
         <p>
           Alle svar regnes om til kilo CO₂-ekvivalenter per år og sammenlignes med{' '}

@@ -159,7 +159,7 @@ export function DonutChart({ footprint, colors, highlightId, ref }: DonutChartPr
           <AnimatedNumber
             value={personalKg}
             format={formatKg}
-            className="block text-4xl font-black tracking-tight text-primary tabular-nums"
+            className="block text-4xl font-black tracking-tight text-primary-ink tabular-nums"
           />
         </div>
         {segments.length > 0 && (

@@ -84,7 +84,7 @@ export function AdminDashboard({ email, onSignOut }: AdminDashboardProps) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-black text-primary">Adminpanel</h1>
+          <h1 className="text-3xl font-black text-primary-ink">Adminpanel</h1>
           <p className="text-sm text-muted-foreground">
             Innlogget som {email}. Endringer vises i kalkulatoren neste gang siden lastes.
           </p>
@@ -100,7 +100,7 @@ export function AdminDashboard({ email, onSignOut }: AdminDashboardProps) {
         </p>
       )}
       {notice && (
-        <p role="status" className="rounded-lg bg-accent/15 p-3 text-sm text-primary">
+        <p role="status" className="rounded-lg bg-accent/15 p-3 text-sm text-primary-ink">
           {notice}
         </p>
       )}
@@ -135,7 +135,7 @@ export function AdminDashboard({ email, onSignOut }: AdminDashboardProps) {
                 }}
                 className={cn(
                   '-mb-px border-b-2 px-3 py-2 text-sm font-bold',
-                  tab === t.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground',
+                  tab === t.id ? 'border-primary text-primary-ink' : 'border-transparent text-muted-foreground hover:text-foreground',
                 )}
               >
                 {t.label}

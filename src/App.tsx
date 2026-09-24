@@ -16,25 +16,19 @@ function App() {
         {/* Myke lysflekker i bakgrunnen */}
         <div aria-hidden className="absolute inset-0 -z-10">
           <div className="absolute -top-32 -right-24 size-[28rem] rounded-full bg-accent/40 blur-3xl" />
-          <div className="absolute -bottom-40 -left-20 size-[24rem] rounded-full bg-[#1b3a1b] blur-3xl" />
+          <div className="absolute -bottom-40 -left-20 size-[24rem] rounded-full bg-primary-strong blur-3xl" />
         </div>
 
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <a href="/" className="flex items-center gap-3">
-            <span aria-hidden className="grid size-9 place-items-center rounded-xl bg-white/15 text-lg font-black ring-1 ring-white/25 backdrop-blur">
-              C
-            </span>
-            <span className="text-sm font-bold tracking-wide">Bærekraftskalkulator</span>
-          </a>
-          {isAdminRoute && (
+        {isAdminRoute && (
+          <div className="mx-auto flex max-w-6xl items-center justify-end px-4 py-4 sm:px-6">
             <a href="/" className="text-sm underline underline-offset-4">
               Til kalkulatoren
             </a>
-          )}
-        </div>
+          </div>
+        )}
 
         {!isAdminRoute && (
-          <div className="mx-auto max-w-6xl px-4 pt-6 pb-20 sm:px-6 sm:pt-10 sm:pb-24">
+          <div className="mx-auto max-w-6xl px-4 pt-14 pb-20 sm:px-6 sm:pt-20 sm:pb-24">
             <h1 className="max-w-3xl text-4xl leading-[1.05] font-black tracking-tight text-balance sm:text-5xl">
               Hvor bærekraftig er du egentlig i ditt daglige liv?
             </h1>

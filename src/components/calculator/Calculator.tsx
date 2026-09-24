@@ -130,7 +130,7 @@ export function Calculator() {
             <div className="w-36">
               <div className="h-2 overflow-hidden rounded-full bg-muted">
                 <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-accent to-primary"
+                  className="h-full rounded-full bg-gradient-to-r from-accent to-primary-strong"
                   initial={false}
                   animate={{ width: `${progress * 100}%` }}
                   transition={{ type: 'spring', stiffness: 120, damping: 20 }}
@@ -251,12 +251,12 @@ function StepHeading({ step, id, title, children }: { step: number; id: string; 
     <div className="flex items-start gap-3">
       <span
         aria-hidden
-        className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent to-primary text-sm font-black text-primary-foreground shadow-lift"
+        className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent to-primary-strong text-sm font-black text-primary-foreground shadow-lift"
       >
         {step}
       </span>
       <div>
-        <h2 id={id} className="text-xl font-black tracking-tight text-primary sm:text-2xl">
+        <h2 id={id} className="text-xl font-black tracking-tight text-primary-ink sm:text-2xl">
           {title}
         </h2>
         <p className="text-sm text-muted-foreground">{children}</p>

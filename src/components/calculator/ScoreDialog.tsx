@@ -43,7 +43,7 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
 
           <ScoreGauge score={score} versting={versting} />
 
-          <p className={cn('mt-1 text-center text-2xl font-black', versting ? 'text-danger' : 'text-primary')}>
+          <p className={cn('mt-1 text-center text-2xl font-black', versting ? 'text-danger' : 'text-primary-ink')}>
             {scoreHeadline(score)}
           </p>
           <Dialog.Description className="mt-1 text-center">
@@ -58,9 +58,9 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
                 <Snowflake className="size-5 text-sky-600" />
               </span>
               <p>
-                <span className="block text-sm font-bold text-primary">Et enkelt grep</span>
+                <span className="block text-sm font-bold text-primary-ink">Et enkelt grep</span>
                 Dersom du bare {easyWin.text}, sparer du{' '}
-                <strong className="text-primary">{formatKg(easyWin.savingKg)}</strong> i året.
+                <strong className="text-primary-ink">{formatKg(easyWin.savingKg)}</strong> i året.
                 <span className="mt-2 block text-sm">
                   Hvert år redder det omtrent{' '}
                   <strong>{formatArea(seaIceM2(easyWin.savingKg))} arktisk sommeris</strong> –
@@ -138,7 +138,7 @@ function ScoreGauge({ score, versting }: { score: number; versting: boolean }) {
         />
       </svg>
       <div className="absolute inset-x-0 bottom-0 flex flex-col items-center">
-        <span className={cn('text-6xl leading-none font-black tabular-nums', versting ? 'text-danger' : 'text-primary')}>
+        <span className={cn('text-6xl leading-none font-black tabular-nums', versting ? 'text-danger' : 'text-primary-ink')}>
           <AnimatedNumber value={score} from={0} format={formatScore} duration={duration} />
         </span>
         <span className="text-sm text-muted-foreground">av 10</span>

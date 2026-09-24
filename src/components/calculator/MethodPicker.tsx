@@ -72,7 +72,7 @@ export function MethodPicker({
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
-          className="flex w-full items-center justify-between bg-gradient-to-r from-primary to-[#3a6538] px-4 py-3 text-left font-bold text-primary-foreground"
+          className="flex w-full items-center justify-between bg-gradient-to-r from-primary to-primary-strong px-4 py-3 text-left font-bold text-primary-foreground"
         >
           Utslippsmetoder
           <ChevronDown className={cn('size-5 transition-transform duration-300', menuOpen && 'rotate-180')} />
@@ -140,7 +140,7 @@ export function MethodPicker({
                               aria-current={isActive ? 'true' : undefined}
                               className={cn(
                                 'relative flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors',
-                                isActive ? 'font-bold text-primary' : 'text-foreground/80 hover:text-foreground',
+                                isActive ? 'font-bold text-primary-ink' : 'text-foreground/80 hover:text-foreground',
                               )}
                             >
                               <span className="flex-1">{method.name}</span>
@@ -190,7 +190,7 @@ export function MethodPicker({
               </legend>
               <p
                 id="method-question"
-                className="mb-6 text-xl leading-snug font-black tracking-tight text-primary sm:text-2xl"
+                className="mb-6 text-xl leading-snug font-black tracking-tight text-primary-ink sm:text-2xl"
               >
                 {activeMethod.question}
               </p>
@@ -216,7 +216,7 @@ export function MethodPicker({
                         <motion.span
                           layoutId={`choice-${activeMethod.id}`}
                           aria-hidden
-                          className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-[#3a6538]"
+                          className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary to-primary-strong"
                           transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                         />
                       )}
