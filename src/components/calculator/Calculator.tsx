@@ -137,9 +137,9 @@ export function Calculator() {
           </StepHeading>
           <div className="flex items-center gap-3 text-sm">
             <div className="w-36">
-              <div className="h-2 overflow-hidden rounded-full bg-muted">
+              <div className="h-2 overflow-hidden bg-muted">
                 <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-accent to-primary-strong"
+                  className="h-full bg-primary"
                   initial={false}
                   animate={{ width: `${progress * 100}%` }}
                   transition={{ type: 'spring', stiffness: 120, damping: 20 }}
@@ -176,7 +176,7 @@ export function Calculator() {
           <div ref={calcAreaRef} className="mt-7 border-t border-border/70 pt-6">
             <Button
               size="lg"
-              className="btn-shine h-13 w-full rounded-xl text-lg font-bold shadow-lift transition-transform hover:-translate-y-0.5"
+              className="h-13 w-full text-lg font-bold"
               onClick={handleCalculate}
             >
               <Sparkles /> Regn ut min bærekraftsscore
@@ -192,10 +192,10 @@ export function Calculator() {
         <Card
           ref={tankRef}
           aria-labelledby="tank-heading"
-          className="scroll-mt-6 bg-gradient-to-b from-secondary to-card p-5 sm:p-7"
+          className="scroll-mt-6 p-5 sm:p-7"
         >
           <StepHeading step={3} id="tank-heading" title="I forhold til snittet">
-            Oransje strek er snittet for en nordmann, grønn er{' '}
+            Rød strek er snittet for en nordmann, grønn er{' '}
             {data.settings.targetLabel?.toLowerCase() ?? 'klimamålet'}.
           </StepHeading>
           {snapshotStale && (
@@ -226,12 +226,12 @@ export function Calculator() {
             transition={{ type: 'spring', stiffness: 260, damping: 26 }}
             className="fixed inset-x-0 bottom-4 z-30 flex justify-center px-4"
           >
-            <div className="flex items-center gap-4 rounded-full border border-white/40 bg-primary-strong/95 py-2 pr-2 pl-5 text-primary-foreground shadow-lift backdrop-blur-md">
+            <div className="flex items-center gap-4 bg-primary-strong py-2 pr-2 pl-5 text-primary-foreground">
               <span className="text-sm">
                 Dine valg:{' '}
                 <AnimatedNumber value={footprint.personalKg} format={formatKg} className="font-bold tabular-nums" />
               </span>
-              <Button size="sm" variant="secondary" className="rounded-full font-bold" onClick={handleCalculate}>
+              <Button size="sm" variant="secondary" className="font-bold" onClick={handleCalculate}>
                 Regn ut
               </Button>
             </div>
@@ -257,18 +257,19 @@ export function Calculator() {
 
 function StepHeading({ step, id, title, children }: { step: number; id: string; title: string; children: ReactNode }) {
   return (
-    <div className="flex items-start gap-3">
-      <span
-        aria-hidden
-        className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-primary-strong to-primary-ink text-sm font-bold text-primary-foreground shadow-lift"
-      >
-        {step}
+    <div className="flex items-start gap-4">
+      {/* Nummerfane i samme stil som «nr. 1» på cultura.no */}
+      <span aria-hidden className="flex w-11 shrink-0 flex-col">
+        <span className="grid h-10 place-items-center bg-primary text-xl font-bold text-primary-foreground italic">
+          {step}
+        </span>
+        <span className="h-1.5 bg-forest" />
       </span>
       <div>
-        <h2 id={id} className="text-xl font-normal text-primary-ink sm:text-2xl">
+        <h2 id={id} className="text-2xl font-bold text-primary">
           {title}
         </h2>
-        <p className="text-sm text-muted-foreground">{children}</p>
+        <p className="text-muted-foreground">{children}</p>
       </div>
     </div>
   )
