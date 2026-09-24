@@ -4,6 +4,7 @@ import { Lightbulb, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { EasyWin } from '@/lib/calculator/easyWin'
 import { formatKg, type Footprint } from '@/lib/calculator/engine'
+import { formatArea, seaIceM2, shareOfBudget } from '@/lib/calculator/equivalents'
 import { isKlimaversting, scoreHeadline, sustainabilityScore } from '@/lib/calculator/score'
 import { cn } from '@/lib/utils'
 import type { CalculatorSettings } from '@/types/calculator'
@@ -85,6 +86,19 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
                 <span className="block text-sm font-bold text-primary">Et enkelt grep</span>
                 Dersom du bare {easyWin.text}, sparer du{' '}
                 <strong className="text-primary">{formatKg(easyWin.savingKg)}</strong> i året.
+                <span className="mt-2 block text-sm">
+                  Hvert år redder det omtrent{' '}
+                  <strong>{formatArea(seaIceM2(easyWin.savingKg))} arktisk sommeris</strong> –
+                  isbjørnens jaktområde
+                  {settings.targetKg ? (
+                    <>
+                      {' '}– og tilsvarer {shareOfBudget(easyWin.savingKg, settings.targetKg)} det hver av oss
+                      kan slippe ut i året for å nå {settings.targetLabel?.toLowerCase() ?? 'klimamålet'}.
+                    </>
+                  ) : (
+                    '.'
+                  )}
+                </span>
               </p>
             </div>
           )}

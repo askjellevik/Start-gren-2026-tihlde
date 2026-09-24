@@ -1,5 +1,6 @@
 import type { CalculatorData } from '@/types/calculator'
 import { formatKg, PERIOD_LABEL } from '@/lib/calculator/engine'
+import { SEA_ICE_M2_PER_TONNE, SEA_ICE_SOURCE_URL } from '@/lib/calculator/equivalents'
 
 // "Kilder og metode": viser hvor hvert tall kommer fra.
 export function SourcesSection({ data }: { data: CalculatorData }) {
@@ -33,6 +34,11 @@ export function SourcesSection({ data }: { data: CalculatorData }) {
           delt på antall innbyggere, inkludert olje- og gassproduksjon for eksport. 13 tonn er alt
           forbruk i Norge inkludert offentlig sektor og investeringer. Ingen av dem måler det én
           person selv kan påvirke, så vi bruker livsstilsfotavtrykket.
+        </p>
+        <p className="text-muted-foreground">
+          Havis: hvert tonn CO₂ fører til at rundt {SEA_ICE_M2_PER_TONNE} m² arktisk sommeris forsvinner{' '}
+          <SourceLink name="Notz & Stroeve 2016, Science" url={SEA_ICE_SOURCE_URL} />. Det brukes for å
+          sette besparelsene i «Et enkelt grep» i perspektiv.
         </p>
         <p className="text-muted-foreground">
           Tallene er avrundede gjennomsnitt og gir et omtrentlig bilde, ikke et nøyaktig
