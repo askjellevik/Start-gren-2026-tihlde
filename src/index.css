@@ -4,6 +4,8 @@
 @import "@fontsource/lato/400.css";
 @import "@fontsource/lato/400-italic.css";
 @import "@fontsource/lato/700.css";
+@import "@fontsource/lato/700-italic.css";
+@import "@fontsource/lato/900-italic.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -23,6 +25,8 @@
   --brand-accent: #728f3f;             /* Cultura olivengrønn */
   --brand-accent-foreground: #ffffff;
   --brand-background: #ffffff;
+  --brand-page: #efede8;              /* sidebakgrunn bak hvite kort */
+  --brand-forest: #2a4e2a;            /* Cultura mørk grønn, store overskrifter */
   --brand-foreground: #42413e;         /* Cultura brødtekst */
 
   /* Kalkulator-spesifikt */
@@ -34,7 +38,7 @@
   --average-label: #a61b1b;          /* tekst i samme farge, høy kontrast */
 
   /* Radius – alle rounded-* skaleres fra denne */
-  --brand-radius: 0.5rem;
+  --brand-radius: 0;                  /* cultura.no har firkantede flater */
 
   /* Fonter. cultura.no bruker Lato til alt: overskrifter i vekt 400 med
      normal sperring, knapper og uthevinger i 700. («cultura-bank» er bare
@@ -126,6 +130,8 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-forest: var(--brand-forest);
+  --color-page: var(--brand-page);
   --color-primary-strong: var(--primary-strong);
   --color-primary-ink: var(--primary-ink);
   --color-primary-foreground: var(--primary-foreground);
@@ -197,26 +203,9 @@
 /* =====================================================================
    MODERNE FLATER – myke skygger, bakgrunnsgradient og glans
    ===================================================================== */
-@utility shadow-soft {
-  box-shadow:
-    0 1px 2px rgb(42 78 42 / 0.05),
-    0 6px 16px -4px rgb(42 78 42 / 0.08),
-    0 24px 48px -24px rgb(42 78 42 / 0.18);
-}
-
-@utility shadow-lift {
-  box-shadow:
-    0 2px 4px rgb(42 78 42 / 0.08),
-    0 12px 28px -6px rgb(42 78 42 / 0.2);
-}
-
 @layer base {
   body {
-    background:
-      radial-gradient(60rem 30rem at 100% 0%, rgb(114 143 63 / 0.10), transparent 60%),
-      radial-gradient(50rem 30rem at 0% 30%, rgb(247 242 239 / 0.9), transparent 70%),
-      var(--background);
-    background-attachment: fixed;
+    background: var(--brand-page);
   }
 }
 

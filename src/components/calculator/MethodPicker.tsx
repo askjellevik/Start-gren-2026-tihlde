@@ -72,13 +72,13 @@ export function MethodPicker({
       {/* Venstre: nedtrekksmenyer */}
       <nav
         aria-label="Utslippsmetoder"
-        className="self-start overflow-hidden rounded-xl bg-muted/60 ring-1 ring-border/70"
+        className="self-start bg-muted"
       >
         <button
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
           aria-expanded={menuOpen}
-          className="flex w-full items-center justify-between bg-gradient-to-r from-primary-strong to-primary-ink px-4 py-3 text-left font-bold text-primary-foreground"
+          className="flex w-full items-center justify-between bg-primary-strong px-4 py-3 text-left font-bold text-primary-foreground"
         >
           Utslippsmetoder
           <ChevronDown className={cn('size-5 transition-transform duration-300', menuOpen && 'rotate-180')} />
@@ -112,9 +112,9 @@ export function MethodPicker({
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm leading-tight font-bold">{category.name}</span>
-                      <span aria-hidden className="mt-1 block h-1 overflow-hidden rounded-full bg-border/70">
+                      <span aria-hidden className="mt-1 block h-1 overflow-hidden bg-border/70">
                         <span
-                          className="block h-full rounded-full transition-all duration-500"
+                          className="block h-full transition-all duration-500"
                           style={{
                             width: `${(answered / Math.max(1, methods.length)) * 100}%`,
                             backgroundColor: category.color,
@@ -141,7 +141,7 @@ export function MethodPicker({
                               <motion.span
                                 layoutId="active-method"
                                 aria-hidden
-                                className="absolute inset-0 rounded-lg bg-card shadow-soft ring-1 ring-border/70"
+                                className="absolute inset-0 border-l-4 border-primary bg-card"
                                 transition={{ type: 'spring', stiffness: 400, damping: 34 }}
                               />
                             )}
@@ -182,15 +182,8 @@ export function MethodPicker({
       {/* Høyre: valg */}
       <div
         ref={questionRef}
-        className="relative scroll-mt-4 self-start overflow-clip rounded-xl md:sticky md:top-6 bg-gradient-to-br from-card via-card to-secondary/70 p-5 ring-1 ring-border/70 md:p-7"
+        className="relative scroll-mt-4 self-start border border-border p-5 md:sticky md:top-6 md:p-7"
       >
-        {activeCategory && (
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full opacity-20 blur-3xl transition-colors duration-500"
-            style={{ backgroundColor: activeCategory.color }}
-          />
-        )}
         <AnimatePresence mode="wait" initial={false}>
           {activeMethod ? (
             <motion.fieldset
@@ -207,7 +200,7 @@ export function MethodPicker({
               </legend>
               <p
                 id="method-question"
-                className="mb-6 text-xl leading-snug font-normal text-primary-ink sm:text-2xl"
+                className="mb-6 text-xl leading-snug font-bold text-primary sm:text-2xl"
               >
                 {activeMethod.question}
               </p>
@@ -225,22 +218,22 @@ export function MethodPicker({
                       className={cn(
                         'relative flex items-center justify-between gap-3 rounded-xl border bg-card px-4 py-3.5 text-left transition-all duration-200',
                         selected
-                          ? 'border-transparent text-primary-foreground shadow-lift'
-                          : 'border-border hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-soft',
+                          ? 'border-transparent text-primary-foreground'
+                          : 'border-border hover:border-primary hover:bg-muted',
                       )}
                     >
                       {selected && (
                         <motion.span
                           layoutId={`choice-${activeMethod.id}`}
                           aria-hidden
-                          className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary-strong to-primary-ink"
+                          className="absolute inset-0 bg-primary-strong"
                           transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                         />
                       )}
                       <span className="relative font-bold">{choice.label}</span>
                       <span
                         className={cn(
-                          'relative shrink-0 rounded-full px-2 py-0.5 text-xs tabular-nums',
+                          'relative shrink-0 px-2 py-0.5 text-xs tabular-nums',
                           selected ? 'bg-white/15 text-primary-foreground' : 'bg-muted text-muted-foreground',
                         )}
                       >

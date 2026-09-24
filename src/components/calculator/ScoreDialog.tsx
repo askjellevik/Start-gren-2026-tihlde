@@ -29,7 +29,7 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+        <Dialog.Overlay className="fixed inset-0 z-40 bg-black/50 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
         <Dialog.Content
           className="fixed top-1/2 left-1/2 z-50 max-h-[90svh] w-[calc(100vw-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl bg-background p-6 shadow-2xl ring-1 ring-border/60 data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:fade-in-0 sm:p-8"
         >
@@ -43,7 +43,7 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
 
           <ScoreGauge score={score} versting={versting} />
 
-          <p className={cn('mt-1 text-center text-2xl font-normal', versting ? 'text-danger' : 'text-primary-ink')}>
+          <p className={cn('mt-1 text-center text-2xl font-bold', versting ? 'text-danger' : 'text-primary-ink')}>
             {scoreHeadline(score)}
           </p>
           <Dialog.Description className="mt-1 text-center">
@@ -53,8 +53,8 @@ export function ScoreDialog({ open, onOpenChange, footprint, settings, easyWin }
           </Dialog.Description>
 
           {easyWin && (
-            <div className="mt-5 flex gap-3 rounded-2xl bg-gradient-to-br from-accent/20 via-accent/5 to-accent/10 p-4 ring-1 ring-accent/30">
-              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-card shadow-soft">
+            <div className="mt-5 flex gap-3 border-l-4 border-primary bg-muted p-4">
+              <span aria-hidden className="grid size-9 shrink-0 place-items-center bg-card">
                 <Snowflake className="size-5 text-primary-ink" />
               </span>
               <p>
@@ -120,13 +120,13 @@ function ScoreGauge({ score, versting }: { score: number; versting: boolean }) {
             <stop offset="1" stopColor="var(--accent)" />
           </linearGradient>
         </defs>
-        <path d={GAUGE_ARC} fill="none" stroke="var(--muted)" strokeWidth={18} strokeLinecap="round" />
+        <path d={GAUGE_ARC} fill="none" stroke="var(--muted)" strokeWidth={18} strokeLinecap="butt" />
         <motion.path
           d={GAUGE_ARC}
           fill="none"
           stroke="url(#gauge-fill)"
           strokeWidth={18}
-          strokeLinecap="round"
+          strokeLinecap="butt"
           style={{ pathLength: progress }}
         />
         <motion.circle

@@ -22,7 +22,7 @@ export function FlyingChips({ chips, onDone }: FlyingChipsProps) {
         {chips.map((chip) => (
           <motion.span
             key={chip.key}
-            className="absolute top-0 left-0 rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap text-white shadow-lg"
+            className="absolute top-0 left-0 px-3 py-1 text-xs font-bold whitespace-nowrap text-white"
             style={{ background: chip.color }}
             initial={{ x: chip.from.x, y: chip.from.y, scale: 1, opacity: 1 }}
             animate={{
