@@ -2,6 +2,7 @@ import { Check, ChevronDown, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useRef, useState, type MouseEvent } from 'react'
 import { annualKg, formatKg, PERIOD_LABEL } from '@/lib/calculator/engine'
+import { unlockedCategoryCount } from '@/lib/calculator/progress'
 import { cn } from '@/lib/utils'
 import type { Answers, CalculatorData } from '@/types/calculator'
 
@@ -61,6 +62,11 @@ export function MethodPicker({
 
   const activeCategory = data.categories.find((c) => c.id === activeMethod?.categoryId)
 
+  // Kategoriene vises én etter én; neste dukker opp når den forrige er ferdig.
+  const unlocked = unlockedCategoryCount(data, answers)
+  const visibleCategories = data.categories.slice(0, unlocked)
+  const lockedCount = data.categories.length - unlocked
+
   return (
     <div className="grid gap-4 md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)]">
       {/* Venstre: nedtrekksmenyer */}
@@ -80,12 +86,17 @@ export function MethodPicker({
 
         {menuOpen && (
           <ul className="space-y-1 p-2">
-            {data.categories.map((category) => {
+            {visibleCategories.map((category) => {
               const methods = data.methods.filter((m) => m.categoryId === category.id)
               const answered = methods.filter((m) => answers[m.id] !== undefined).length
               const open = openCategories.has(category.id)
               return (
-                <li key={category.id}>
+                <motion.li
+                  key={category.id}
+                  initial={reduceMotion ? false : { opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                >
                   <button
                     type="button"
                     onClick={() => toggleCategory(category.id)}
@@ -155,9 +166,15 @@ export function MethodPicker({
                       })}
                     </ul>
                   )}
-                </li>
+                </motion.li>
               )
             })}
+            {lockedCount > 0 && (
+              <li className="px-3 pt-1 pb-1.5 text-xs text-muted-foreground">
+                Svar på alt over for å gå videre · {lockedCount}{' '}
+                {lockedCount === 1 ? 'kategori' : 'kategorier'} igjen
+              </li>
+            )}
           </ul>
         )}
       </nav>

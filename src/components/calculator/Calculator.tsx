@@ -34,6 +34,7 @@ export function Calculator() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const dialogTimer = useRef<number | undefined>(undefined)
   const highlightTimer = useRef<number | undefined>(undefined)
+  const advanceTimer = useRef<number | undefined>(undefined)
   const donutRef = useRef<HTMLDivElement>(null)
   const tankRef = useRef<HTMLElement>(null)
   const calcAreaRef = useRef<HTMLDivElement>(null)
@@ -93,9 +94,16 @@ export function Calculator() {
     const nextMethod = [...orderedMethods.slice(start + 1), ...orderedMethods.slice(0, start)].find(
       (m) => next[m.id] === undefined,
     )
+    window.clearTimeout(advanceTimer.current)
     if (nextMethod) {
-      window.setTimeout(() => setActiveMethodId(nextMethod.id), reduceMotion ? 0 : 450)
+      advanceTimer.current = window.setTimeout(() => setActiveMethodId(nextMethod.id), reduceMotion ? 0 : 450)
     }
+  }
+
+  // Velger man selv et spørsmål, avbrytes det automatiske hoppet videre.
+  function handleSelectMethod(methodId: string) {
+    window.clearTimeout(advanceTimer.current)
+    setActiveMethodId(methodId)
   }
 
   function handleCalculate() {
@@ -111,6 +119,7 @@ export function Calculator() {
 
   function handleReset() {
     window.clearTimeout(dialogTimer.current)
+    window.clearTimeout(advanceTimer.current)
     setAnswers({})
     setSnapshot(null)
     setActiveMethodId(null)
@@ -124,7 +133,7 @@ export function Calculator() {
       <Card aria-labelledby="inputs-heading" className="p-5 sm:p-7">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
           <StepHeading step={1} id="inputs-heading" title="Fortell om hverdagen din">
-            Velg en kategori og svar på spørsmålene. Du kan hoppe fritt mellom dem.
+            Svar på spørsmålene i hver kategori, så dukker den neste opp.
           </StepHeading>
           <div className="flex items-center gap-3 text-sm">
             <div className="w-36">
@@ -150,7 +159,7 @@ export function Calculator() {
           answers={answers}
           colors={colors}
           activeMethodId={activeId}
-          onSelectMethod={setActiveMethodId}
+          onSelectMethod={handleSelectMethod}
           onAnswer={handleAnswer}
         />
       </Card>
